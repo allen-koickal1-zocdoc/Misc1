@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Flows Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 24px 32px; border-bottom: 1px solid #334155; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .header h1 { font-size: 24px; font-weight: 600; color: #f8fafc; }
+        .header p { color: #94a3b8; margin-top: 4px; font-size: 14px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+        .card-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 8px; }
+        .card-value { font-size: 32px; font-weight: 700; color: #f8fafc; }
+        .card-value.success { color: #4ade80; }
+        .card-value.warning { color: #fbbf24; }
+        .card-value.danger { color: #f87171; }
+        .card-subtitle { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+        .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: #1e293b; padding: 4px; border-radius: 8px; width: fit-content; flex-wrap: wrap; }
+        .tab { padding: 8px 16px; border-radius: 6px; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .tab:hover { color: #e2e8f0; }
+        .tab.active { background: #3b82f6; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .table-card { background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; margin-bottom: 24px; }
+        .table-header { padding: 16px 24px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .table-header h3 { font-size: 16px; font-weight: 600; }
+        .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .filter-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid #475569; background: transparent; color: #94a3b8; cursor: pointer; font-size: 13px; }
+        .filter-btn:hover, .filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .search-input { padding: 8px 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 13px; width: 200px; }
+        .search-input:focus { outline: none; border-color: #3b82f6; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; background: #0f172a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; font-weight: 600; }
+        td { padding: 12px 16px; border-bottom: 1px solid #334155; font-size: 14px; }
+        tr:hover td { background: #334155; }
+
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .status-Covered { background: #166534; color: #bbf7d0; }
+        .status-Partial { background: #854d0e; color: #fef08a; }
+        .status-Missing { background: #991b1b; color: #fecaca; }
+
+        .team-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; background: #475569; color: #e2e8f0; }
+        .priority-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .priority-P0 { background: #991b1b; color: #fecaca; }
+        .priority-P1 { background: #92400e; color: #fde68a; }
+        .priority-P2 { background: #1e40af; color: #bfdbfe; }
+
+        .progress-container { display: flex; align-items: center; gap: 10px; }
+        .progress-bar { flex: 1; height: 8px; background: #334155; border-radius: 4px; overflow: hidden; min-width: 60px; }
+        .progress-fill { height: 100%; border-radius: 4px; }
+        .progress-fill.success { background: #22c55e; }
+        .progress-fill.warning { background: #f59e0b; }
+        .progress-fill.danger { background: #ef4444; }
+
+        .notes { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        .file-link { font-size: 12px; color: #60a5fa; }
+
+        .exec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px; }
+        .exec-card { background: #1e293b; border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .exec-card h3 { font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+        .health-score { font-size: 64px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+        .health-score.excellent { color: #4ade80; }
+        .health-score.good { color: #a3e635; }
+        .health-score.fair { color: #fbbf24; }
+        .health-score.poor { color: #f87171; }
+        .health-label { text-align: center; color: #94a3b8; font-size: 14px; }
+        .health-score-small { font-size: 48px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+
+        .status-bars { display: flex; flex-direction: column; gap: 12px; }
+        .status-bar-row { display: flex; align-items: center; gap: 12px; }
+        .status-bar-label { width: 80px; font-size: 13px; }
+        .status-bar-container { flex: 1; height: 24px; background: #0f172a; border-radius: 4px; overflow: hidden; }
+        .status-bar-fill { height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 12px; font-weight: 600; }
+
+        .export-btn { padding: 8px 16px; border-radius: 6px; border: none; background: #3b82f6; color: white; cursor: pointer; font-size: 13px; font-weight: 500; }
+        .export-btn:hover { background: #2563eb; }
+        .last-updated { font-size: 12px; color: #64748b; }
+        th.sortable { cursor: pointer; user-select: none; }
+        th.sortable:hover { color: #e2e8f0; }
+        th.sortable::after { content: ' ↕'; opacity: 0.3; }
+        th.sortable.asc::after { content: ' ↑'; opacity: 1; }
+        th.sortable.desc::after { content: ' ↓'; opacity: 1; }
+
+        @media (max-width: 768px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .table-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>Critical Flows Dashboard</h1>
+                <p>Data from: <code>data/*.js</code> files <span class="last-updated" id="lastUpdated"></span></p>
+            </div>
+            <div class="filters">
+                <button class="export-btn" onclick="exportCSV('all')">Export All CSV</button>
+                <button class="export-btn" onclick="exportCSV('missing')" style="background:#991b1b;">Export Missing</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="summary-grid">
+            <div class="card">
+                <div class="card-label">Total Tests</div>
+                <div class="card-value" id="totalTests">0</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Covered</div>
+                <div class="card-value success" id="coveredCount">0</div>
+                <div class="card-subtitle" id="coveredPct">0%</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Partial</div>
+                <div class="card-value warning" id="partialCount">0</div>
+                <div class="card-subtitle" id="partialPct">0%</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Missing</div>
+                <div class="card-value danger" id="missingCount">0</div>
+                <div class="card-subtitle" id="missingPct">0%</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Teams</div>
+                <div class="card-value" id="teamsCount">0</div>
+            </div>
+            <div class="card">
+                <div class="card-label">P0 Tests</div>
+                <div class="card-value danger" id="p0Count">0</div>
+                <div class="card-subtitle" id="p0Missing">0 missing</div>
+            </div>
+            <div class="card">
+                <div class="card-label">P1 Tests</div>
+                <div class="card-value warning" id="p1Count">0</div>
+                <div class="card-subtitle" id="p1Missing">0 missing</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('summary')">Summary</button>
+            <button class="tab" onclick="switchTab('tests')">All Tests</button>
+            <button class="tab" onclick="switchTab('missing')">Missing</button>
+            <button class="tab" onclick="switchTab('partial')">Partial</button>
+            <button class="tab" onclick="switchTab('teams')">By Team</button>
+        </div>
+
+        <div id="summary-tab" class="tab-content active">
+            <div class="exec-grid">
+                <div class="exec-card">
+                    <div class="health-score" id="healthScore">0</div>
+                    <div class="health-label">Overall Coverage</div>
+                </div>
+                <div class="exec-card">
+                    <div class="health-score-small" id="p0Score">0</div>
+                    <div class="health-label">P0 Coverage</div>
+                    <div style="text-align:center;margin-top:8px;font-size:13px;color:#94a3b8;" id="p0Detail"></div>
+                </div>
+                <div class="exec-card">
+                    <h3>Status Breakdown</h3>
+                    <div class="status-bars" id="statusBars"></div>
+                </div>
+            </div>
+            <div class="table-card">
+                <div class="table-header"><h3>Team Overview</h3></div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr>
+                            <th class="sortable" data-sort="team">Team</th>
+                            <th>Owner</th>
+                            <th class="sortable" data-sort="total">Tests</th>
+                            <th class="sortable" data-sort="covered">Covered</th>
+                            <th class="sortable" data-sort="partial">Partial</th>
+                            <th class="sortable" data-sort="missing">Missing</th>
+                            <th class="sortable" data-sort="missingPct">Miss %</th>
+                            <th class="sortable" data-sort="p0">P0</th>
+                            <th class="sortable" data-sort="p0Missing">P0 Miss</th>
+                            <th class="sortable" data-sort="coverage">Coverage</th>
+                        </tr></thead>
+                        <tbody id="teamSummaryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tests-tab" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>All Tests <span id="allTestsCount" style="color:#94a3b8;font-weight:400;"></span></h3>
+                    <div class="filters">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search..." oninput="renderAllTests()">
+                        <select id="teamFilter" onchange="renderAllTests()" style="padding:6px 10px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;"></select>
+                        <select id="statusFilterAll" onchange="renderAllTests()" style="padding:6px 10px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;">
+                            <option value="all">All Status</option>
+                            <option value="Covered">Covered</option>
+                            <option value="Partial">Partial</option>
+                            <option value="Missing">Missing</option>
+                        </select>
+                        <select id="priorityFilter" onchange="renderAllTests()" style="padding:6px 10px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;">
+                            <option value="all">All Priority</option>
+                            <option value="P0">P0</option>
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
+                        </select>
+                        <select id="ownerFilter" onchange="renderAllTests()" style="padding:6px 10px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;"></select>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;max-height:600px;">
+                    <table>
+                        <thead style="position:sticky;top:0;"><tr><th>#</th><th>Test Case</th><th>Owner</th><th>Priority</th><th>Status</th><th>Team</th><th>File</th></tr></thead>
+                        <tbody id="allTestsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="missing-tab" class="tab-content">
+            <div class="table-card">
+                <div class="table-header"><h3>Missing Tests <span id="missingTestsCount" style="color:#94a3b8;font-weight:400;"></span></h3></div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>#</th><th>Test Case</th><th>Priority</th><th>Team</th><th>Owner</th></tr></thead>
+                        <tbody id="missingTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="partial-tab" class="tab-content">
+            <div class="table-card">
+                <div class="table-header"><h3>Partial Tests <span id="partialTestsCount" style="color:#94a3b8;font-weight:400;"></span></h3></div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>#</th><th>Test Case</th><th>Owner</th><th>Priority</th><th>Team</th><th>File</th><th>Notes</th></tr></thead>
+                        <tbody id="partialTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="teams-tab" class="tab-content">
+            <div id="teamsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Load data files -->
+    <script src="data/booking.js"></script>
+    <!-- Add more data files here as you create them -->
+    <!-- <script src="data/search.js"></script> -->
+    <!-- <script src="data/auth.js"></script> -->
+
+    <script>
+        // Collect all data from loaded files
+        const ALL_DATA = [];
+
+        // Check for data objects (naming convention: *_FLOWS)
+        if (typeof BOOKING_FLOWS !== 'undefined') ALL_DATA.push(BOOKING_FLOWS);
+        if (typeof SEARCH_FLOWS !== 'undefined') ALL_DATA.push(SEARCH_FLOWS);
+        if (typeof AUTH_FLOWS !== 'undefined') ALL_DATA.push(AUTH_FLOWS);
+        if (typeof ONBOARDING_FLOWS !== 'undefined') ALL_DATA.push(ONBOARDING_FLOWS);
+        if (typeof PERMISSIONS_FLOWS !== 'undefined') ALL_DATA.push(PERMISSIONS_FLOWS);
+        if (typeof BILLING_FLOWS !== 'undefined') ALL_DATA.push(BILLING_FLOWS);
+        if (typeof APPOINTMENTS_FLOWS !== 'undefined') ALL_DATA.push(APPOINTMENTS_FLOWS);
+        if (typeof RETENTION_FLOWS !== 'undefined') ALL_DATA.push(RETENTION_FLOWS);
+        if (typeof ACQUISITION_FLOWS !== 'undefined') ALL_DATA.push(ACQUISITION_FLOWS);
+        // Add more as needed
+
+        // Flatten all tests
+        let allTests = [];
+        ALL_DATA.forEach(flow => {
+            flow.tests.forEach((t, i) => {
+                allTests.push({
+                    ...t,
+                    team: flow.team,
+                    owner: t.owner || flow.owner || '',
+                    priority: t.priority || flow.priority || 'P1',
+                    index: i + 1
+                });
+            });
+        });
+
+        const colorClass = r => r >= 80 ? 'success' : r >= 50 ? 'warning' : 'danger';
+        const healthClass = s => s >= 80 ? 'excellent' : s >= 60 ? 'good' : s >= 40 ? 'fair' : 'poor';
+
+        let teamSortCol = 'missingPct';
+        let teamSortDir = 'desc';
+
+        function renderDashboard() {
+            const total = allTests.length;
+            const covered = allTests.filter(t => t.status === 'Covered').length;
+            const partial = allTests.filter(t => t.status === 'Partial').length;
+            const missing = allTests.filter(t => t.status === 'Missing').length;
+            const teams = [...new Set(allTests.map(t => t.team))];
+
+            document.getElementById('totalTests').textContent = total;
+            document.getElementById('coveredCount').textContent = covered;
+            document.getElementById('coveredPct').textContent = total ? Math.round((covered/total)*100) + '%' : '0%';
+            document.getElementById('partialCount').textContent = partial;
+            document.getElementById('partialPct').textContent = total ? Math.round((partial/total)*100) + '%' : '0%';
+            document.getElementById('missingCount').textContent = missing;
+            document.getElementById('missingPct').textContent = total ? Math.round((missing/total)*100) + '%' : '0%';
+            document.getElementById('teamsCount').textContent = teams.length;
+
+            // Priority breakdown
+            const p0 = allTests.filter(t => t.priority === 'P0');
+            const p1 = allTests.filter(t => t.priority === 'P1');
+            const p0Covered = p0.filter(t => t.status === 'Covered').length;
+            const p0Partial = p0.filter(t => t.status === 'Partial').length;
+            const p0MissingCount = p0.filter(t => t.status === 'Missing').length;
+            document.getElementById('p0Count').textContent = p0.length;
+            document.getElementById('p0Missing').textContent = p0MissingCount + ' missing';
+            document.getElementById('p1Count').textContent = p1.length;
+            document.getElementById('p1Missing').textContent = p1.filter(t => t.status === 'Missing').length + ' missing';
+
+            // P0 score
+            const p0Score = p0.length > 0 ? Math.round(((p0Covered * 100) + (p0Partial * 50)) / p0.length) : 0;
+            document.getElementById('p0Score').textContent = p0Score;
+            document.getElementById('p0Score').className = 'health-score-small ' + healthClass(p0Score);
+            document.getElementById('p0Detail').textContent = `${p0Covered} covered, ${p0Partial} partial, ${p0MissingCount} missing`;
+
+            // Last updated
+            document.getElementById('lastUpdated').textContent = '| Updated: ' + new Date().toLocaleDateString();
+
+            // Health score (Covered = 100%, Partial = 50%, Missing = 0%)
+            const score = total ? Math.round(((covered * 100) + (partial * 50)) / total) : 0;
+            document.getElementById('healthScore').textContent = score;
+            document.getElementById('healthScore').className = 'health-score ' + healthClass(score);
+
+            // Status bars
+            const maxCount = Math.max(covered, partial, missing, 1);
+            document.getElementById('statusBars').innerHTML = `
+                <div class="status-bar-row">
+                    <div class="status-bar-label" style="color:#4ade80;">Covered</div>
+                    <div class="status-bar-container">
+                        <div class="status-bar-fill" style="width:${(covered/maxCount)*100}%;background:#166534;">${covered}</div>
+                    </div>
+                </div>
+                <div class="status-bar-row">
+                    <div class="status-bar-label" style="color:#fbbf24;">Partial</div>
+                    <div class="status-bar-container">
+                        <div class="status-bar-fill" style="width:${(partial/maxCount)*100}%;background:#854d0e;">${partial}</div>
+                    </div>
+                </div>
+                <div class="status-bar-row">
+                    <div class="status-bar-label" style="color:#f87171;">Missing</div>
+                    <div class="status-bar-container">
+                        <div class="status-bar-fill" style="width:${(missing/maxCount)*100}%;background:#991b1b;">${missing}</div>
+                    </div>
+                </div>
+            `;
+
+            // Team summary
+            renderTeamSummary(teams);
+
+            // Team filter dropdown
+            document.getElementById('teamFilter').innerHTML = '<option value="all">All Teams</option>' +
+                teams.map(t => `<option value="${t}">${t}</option>`).join('');
+
+            // Owner filter dropdown
+            const owners = [...new Set(allTests.map(t => t.owner).filter(o => o))];
+            document.getElementById('ownerFilter').innerHTML = '<option value="all">All Owners</option>' +
+                owners.sort().map(o => `<option value="${o}">${o}</option>`).join('');
+
+            renderAllTests();
+            renderMissing();
+            renderPartial();
+            renderTeamDetails();
+        }
+
+        function renderAllTests() {
+            const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const teamF = document.getElementById('teamFilter')?.value || 'all';
+            const statusF = document.getElementById('statusFilterAll')?.value || 'all';
+            const priorityF = document.getElementById('priorityFilter')?.value || 'all';
+            const ownerF = document.getElementById('ownerFilter')?.value || 'all';
+
+            let filtered = allTests;
+            if (search) filtered = filtered.filter(t => t.test.toLowerCase().includes(search));
+            if (teamF !== 'all') filtered = filtered.filter(t => t.team === teamF);
+            if (statusF !== 'all') filtered = filtered.filter(t => t.status === statusF);
+            if (priorityF !== 'all') filtered = filtered.filter(t => t.priority === priorityF);
+            if (ownerF !== 'all') filtered = filtered.filter(t => t.owner === ownerF);
+
+            document.getElementById('allTestsCount').textContent = `(${filtered.length}${filtered.length !== allTests.length ? '/' + allTests.length : ''})`;
+
+            document.getElementById('allTestsTable').innerHTML = filtered.map((t, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>
+                        ${t.test}
+                        ${t.notes ? `<div class="notes">${t.notes}</div>` : ''}
+                    </td>
+                    <td>${t.owner || '-'}</td>
+                    <td><span class="priority-badge priority-${t.priority}">${t.priority}</span></td>
+                    <td><span class="status-badge status-${t.status}">${t.status}</span></td>
+                    <td><span class="team-badge">${t.team}</span></td>
+                    <td>${t.file ? `<span class="file-link">${t.file}</span>` : '-'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:40px;">No results</td></tr>';
+        }
+
+        function renderMissing() {
+            const missing = allTests.filter(t => t.status === 'Missing').sort((a, b) => a.priority.localeCompare(b.priority));
+            document.getElementById('missingTestsCount').textContent = `(${missing.length})`;
+            document.getElementById('missingTable').innerHTML = missing.map((t, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${t.test}</td>
+                    <td><span class="priority-badge priority-${t.priority}">${t.priority}</span></td>
+                    <td><span class="team-badge">${t.team}</span></td>
+                    <td>${t.owner}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" style="text-align:center;color:#4ade80;padding:40px;">No missing tests!</td></tr>';
+        }
+
+        function renderPartial() {
+            const partial = allTests.filter(t => t.status === 'Partial').sort((a, b) => a.priority.localeCompare(b.priority));
+            document.getElementById('partialTestsCount').textContent = `(${partial.length})`;
+            document.getElementById('partialTable').innerHTML = partial.map((t, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${t.test}</td>
+                    <td>${t.owner || '-'}</td>
+                    <td><span class="priority-badge priority-${t.priority}">${t.priority}</span></td>
+                    <td><span class="team-badge">${t.team}</span></td>
+                    <td>${t.file ? `<span class="file-link">${t.file}</span>` : '-'}</td>
+                    <td class="notes">${t.notes || '-'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" style="text-align:center;color:#4ade80;padding:40px;">No partial tests!</td></tr>';
+        }
+
+        function renderTeamDetails() {
+            const teams = [...new Set(allTests.map(t => t.team))];
+            document.getElementById('teamsContainer').innerHTML = teams.map(team => {
+                const tt = allTests.filter(t => t.team === team);
+                const priority = tt[0]?.priority || 'P1';
+                return `
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h3><span class="team-badge">${team}</span> <span class="priority-badge priority-${priority}">${priority}</span></h3>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead><tr><th>#</th><th>Test Case</th><th>Owner</th><th>Priority</th><th>Status</th><th>File</th><th>Notes</th></tr></thead>
+                                <tbody>
+                                    ${tt.map((t, i) => `
+                                        <tr>
+                                            <td>${i + 1}</td>
+                                            <td>${t.test}</td>
+                                            <td>${t.owner || '-'}</td>
+                                            <td><span class="priority-badge priority-${t.priority}">${t.priority}</span></td>
+                                            <td><span class="status-badge status-${t.status}">${t.status}</span></td>
+                                            <td>${t.file ? `<span class="file-link">${t.file}</span>` : '-'}</td>
+                                            <td class="notes">${t.notes || '-'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
+            document.getElementById(name + '-tab').classList.add('active');
+        }
+
+        function getTeamStats(team) {
+            const tt = allTests.filter(t => t.team === team);
+            const covered = tt.filter(t => t.status === 'Covered').length;
+            const partial = tt.filter(t => t.status === 'Partial').length;
+            const missing = tt.filter(t => t.status === 'Missing').length;
+            const p0Tests = tt.filter(t => t.priority === 'P0');
+            const p0Missing = p0Tests.filter(t => t.status === 'Missing').length;
+            const coverage = Math.round(((covered * 100) + (partial * 50)) / tt.length);
+            const missingPct = Math.round((missing / tt.length) * 100);
+            return {
+                team, owner: tt[0]?.owner || '', total: tt.length,
+                covered, partial, missing, missingPct,
+                p0: p0Tests.length, p0Missing, coverage
+            };
+        }
+
+        function renderTeamSummary(teams) {
+            let data = teams.map(getTeamStats);
+
+            // Sort
+            data.sort((a, b) => {
+                let av = a[teamSortCol], bv = b[teamSortCol];
+                if (typeof av === 'string') return teamSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                return teamSortDir === 'asc' ? av - bv : bv - av;
+            });
+
+            document.getElementById('teamSummaryTable').innerHTML = data.map(t => `<tr>
+                <td><span class="team-badge">${t.team}</span></td>
+                <td>${t.owner}</td>
+                <td>${t.total}</td>
+                <td style="color:#4ade80;">${t.covered}</td>
+                <td style="color:#fbbf24;">${t.partial}</td>
+                <td style="color:#f87171;">${t.missing}</td>
+                <td style="color:${t.missingPct > 50 ? '#f87171' : t.missingPct > 25 ? '#fbbf24' : '#4ade80'};">${t.missingPct}%</td>
+                <td>${t.p0}</td>
+                <td style="color:${t.p0Missing > 0 ? '#f87171' : '#4ade80'};">${t.p0Missing}</td>
+                <td><div class="progress-container"><div class="progress-bar"><div class="progress-fill ${colorClass(t.coverage)}" style="width:${t.coverage}%"></div></div><span>${t.coverage}%</span></div></td>
+            </tr>`).join('');
+
+            // Update sort indicators
+            document.querySelectorAll('#summary-tab th.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+                if (th.dataset.sort === teamSortCol) th.classList.add(teamSortDir);
+            });
+        }
+
+        function sortTeamTable(col) {
+            if (teamSortCol === col) {
+                teamSortDir = teamSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                teamSortCol = col;
+                teamSortDir = 'desc';
+            }
+            const teams = [...new Set(allTests.map(t => t.team))];
+            renderTeamSummary(teams);
+        }
+
+        function exportCSV(type) {
+            let data = type === 'missing' ? allTests.filter(t => t.status === 'Missing') : allTests;
+            const esc = (v = '') => `"${String(v).replace(/"/g, '""')}"`;
+            const headers = ['Test Case', 'Priority', 'Status', 'Team', 'Owner', 'File', 'Notes'];
+            const rows = data.map(t => [
+                esc(t.test),
+                esc(t.priority),
+                esc(t.status),
+                esc(t.team),
+                esc(t.owner),
+                esc(t.file || ''),
+                esc(t.notes || '')
+            ].join(','));
+
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `critical-flows-${type}-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDashboard();
+            // Add click handlers for sortable headers
+            document.querySelectorAll('#summary-tab th.sortable').forEach(th => {
+                th.addEventListener('click', () => sortTeamTable(th.dataset.sort));
+            });
+        });
+    </script>
+</body>
+</html>

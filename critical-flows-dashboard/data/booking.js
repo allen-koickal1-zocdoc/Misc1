@@ -1,0 +1,45 @@
+// Booking Team - Critical Flows
+// Edit this file to update the dashboard
+// Format: { test: "description", status: "Covered|Partial|Missing", file: "spec-file.js", notes: "optional notes" }
+
+const BOOKING_FLOWS = {
+    team: "Booking",
+    owner: "Ayushi Bhatt",
+    priority: "P0",
+    tests: [
+        { test: "Verify user is able to log in using an existing ZD account using email passwordless flow", status: "Missing" },
+        { test: "Verify user is able to log in using an existing ZD account using sms passwordless flow", status: "Missing" },
+        { test: "Verify user is able to sign up and create a new account", status: "Partial", file: "profile-booking-flow.spec.js", notes: "Fill patient info form only checks form/links visibility; no actual account creation" },
+        { test: "Verify user is able to login using google sso", status: "Missing" },
+        { test: "Verify user is able to login using apple sso", status: "Missing" },
+        { test: "User should be able to click on a timeslot on search page and land on patient info when not logged in", status: "Missing" },
+        { test: "Logged in User should be able to click on a timeslot on search page and land on review and book page and book an appointment", status: "Covered", file: "booking-flow.spec.js", notes: "Patient Should book an appointment" },
+        { test: "User should be able to click on a timeslot on practice page and land on patient info when not logged in", status: "Missing" },
+        { test: "Logged in User should be able to click on a timeslot on practice page and land on review and book page and book an appointment", status: "Missing" },
+        { test: "User should be able to click on a timeslot on profile page and land on patient info when not logged in", status: "Missing" },
+        { test: "Logged in User should be able to click on a timeslot on profile page and land on review and book page and book an appointment", status: "Covered", file: "booking-flow.spec.js", notes: "New Patient Booking with the provider / Existing Patient Booking with the provider" },
+        { test: "User should be able to book an appointment via medical team page through book again", status: "Covered", file: "patient-appointments-flow.spec.js", notes: "Your Care Team + Book Now modal tests" },
+        { test: "Verify booking via BOB", status: "Missing" },
+        { test: "Verify booking via SEM", status: "Missing" },
+        { test: "Verify booking via Listing Page", status: "Missing" },
+        { test: "Booking in person appointment", status: "Partial", file: "multiple", notes: "Implicitly covered but no explicit visit-type = in-person assertion" },
+        { test: "Reschedule Appointment", status: "Covered", file: "patient-home-flow.spec.js", notes: "Verifies reschedules/cancellation from appointment card" },
+        { test: "Returning patients rebooking from past appointments", status: "Partial", file: "patient-appointments-flow.spec.js", notes: "Access appointment history navigates only; no rebook step" },
+        { test: "Sub patient booking", status: "Partial", file: "booking-flow.spec.js", notes: "Uses book-for-someone-else-link and sub-patient selectors in age-restriction tests; no dedicated existing sub-patient booking flow" },
+        { test: "Booking virtual appointment", status: "Missing" },
+        { test: "Booking for aggregate locations", status: "Missing" },
+        { test: "User should be able to add member id on review and book page when the member id field is mandatory and book an appointment", status: "Partial", file: "booking-flow.spec.js", notes: "New Patient Booking types into member-id field but doesn't verify mandatory enforcement / error state" },
+        { test: "Upload insurance card on mobile web", status: "Missing" },
+        { test: "Appointment Stacking Detection - Soft and Hard blocking", status: "Covered", file: "booking-flow.spec.js", notes: "Soft Block Check / Hard Block Check" },
+        { test: "Timeslot Lost/Recovery - When the selected timeslot expires during booking", status: "Missing" },
+        { test: "Add Phone number flow on rnb if phone number is not added", status: "Missing" },
+        { test: "Booking via syndication partners eg: Healthgrades", status: "Missing" },
+        { test: "User should be able to open the pre appointment page and see check the insurance status", status: "Partial", file: "patient-appointments-flow.spec.js", notes: "Access Pre-appointment Page navigates only; no insurance-status assertion" },
+        { test: "Booking with in network insurance", status: "Covered", file: "profile-booking-flow.spec.js", notes: "Patient can select self-pay/OON to be blocked... book with In network insurance" },
+        { test: "Booking with self pay", status: "Partial", file: "profile-booking-flow.spec.js", notes: "Self-pay exercised only in the INN-only blocking case; no end-to-end self-pay successful booking" },
+        { test: "Booking with OON insurance", status: "Covered", file: "profile-booking-flow.spec.js", notes: "Logged-In patient can enter the booking flow with an out-of-network insurance selected to see the OON modal" },
+        { test: "Booking with in network only insurance", status: "Covered", file: "profile-booking-flow.spec.js", notes: "Patient can select self-pay/OON to be blocked from booking with an in-network-only provider" },
+        { test: "Resource booking flow (assistant practitioner under supervising MD)", status: "Covered", file: "booking-flow.spec.js", notes: "Verify resource booking flow; verifies provider name shows as Practitioner at the office of Dr.... and assistant-provider banner" },
+        { test: "APP (Advanced Practice Provider) full profile booking - book from an NP/PA standalone profile page", status: "Missing", notes: "No tests for booking from an APP's own dedicated profile" },
+    ]
+};
