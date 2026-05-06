@@ -259,7 +259,7 @@
 
 ## Executive Summary
 
-Production code analysis reveals **53 new test cases** identified from route definitions and permission checks that are missing from the current test suite. These gaps span Home page, Your Website, Working Hours, Billing operations, Practice Settings, and more.
+Production code analysis reveals **49 new test cases** identified from route definitions and permission checks that are missing from the current test suite. These gaps span Home page, Your Website, Working Hours, Billing operations, Practice Settings, and more.
 
 ---
 
@@ -290,9 +290,7 @@ Production code analysis reveals **53 new test cases** identified from route def
 | S.No | Test Case | Roles with Access | Priority |
 |------|-----------|-------------------|----------|
 | 114 | Verify Full Access user can access Your Website page | Full Access | P2 |
-| 115 | Verify Full Access user can manage vanity URL | Full Access | P2 |
-| 116 | Verify Full Access user can buy custom domain | Full Access | P3 |
-| 117 | Verify other roles CANNOT access Your Website | All non-FA roles | P2 |
+| 115 | Verify other roles CANNOT access Your Website | All non-FA roles | P2 |
 
 ### Working Hours Page (Current Coverage: 0%)
 
@@ -356,8 +354,6 @@ Production code analysis reveals **53 new test cases** identified from route def
 |------|-----------|----------|
 | 141 | Verify User Mgmt user CANNOT delete Full Access users | P1 |
 | 142 | Verify User Mgmt user CANNOT edit Full Access user roles | P1 |
-| 143 | Verify User Mgmt user can generate invitation link | P2 |
-| 144 | Verify invitation link expiration behavior | P3 |
 
 ---
 
@@ -404,47 +400,15 @@ Production code analysis reveals **53 new test cases** identified from route def
 | Category | Original Tests | New Tests Identified | Total | Priority Distribution |
 |----------|---------------|---------------------|-------|----------------------|
 | Home Page | 3 (missing) | 9 | 9 | P1: 3, P2: 4, P3: 2 |
-| Your Website | 1 (missing) | 4 | 4 | P2: 3, P3: 1 |
+| Your Website | 1 (missing) | 2 | 2 | P2: 2 |
 | Working Hours | 4 (missing) | 4 | 4 | P1: 2, P2: 2 |
 | Billing Operations | 4 (missing) | 8 | 8 | P1: 5, P2: 3 |
 | Practice Settings | 6 (missing) | 7 | 7 | P1: 2, P2: 4, P3: 1 |
-| User Management | 1 (missing) | 4 | 4 | P1: 2, P2: 1, P3: 1 |
+| User Management | 1 (missing) | 2 | 2 | P1: 2 |
 | Settings Dropdown | 3 (missing) | 4 | 4 | P2: 2, P3: 2 |
 | Provider Profile | - | 10 | 10 | P2: 10 |
 | Products/Features | - | 3 | 3 | P2: 2, P3: 1 |
-| **TOTAL NEW** | - | **53** | 53 | **P1: 14, P2: 31, P3: 8** |
-
----
-
-## Recommended Test File Structure
-
-```
-cypress/e2e/BU/Provider/Acquisition/Account-User-Setup/
-├── Pages/
-│   └── user-management-page.spec.js  # UPDATE: Add FA protection tests
-
-cypress/e2e/BU/Provider/Adoption/Provider-Onboarding/
-├── Flows/
-│   └── home-page-flow.spec.js        # NEW: Home page onboarding flows
-│
-├── Pages/
-│   └── home-page.spec.js             # NEW: Home page element tests
-
-cypress/e2e/BU/Provider/Retention/Preferences-Financial-Fit/
-├── Flows/
-│   └── working-hours-flow.spec.js    # NEW: Working hours management
-│
-├── Pages/
-│   ├── working-hours-page.spec.js    # NEW: Working hours page tests
-│   └── your-website-page.spec.js     # NEW: Your Website settings
-
-cypress/e2e/BU/Provider/Acquisition/Provider-Billing/
-├── Flows/
-│   └── billing-payment-flow.spec.js  # NEW: Payment method management
-│
-├── Pages/
-│   └── billing-settings-page.spec.js # UPDATE: Add ACH/CC/invoice tests
-```
+| **TOTAL NEW** | - | **49** | 49 | **P1: 14, P2: 27, P3: 6** |
 
 ---
 
