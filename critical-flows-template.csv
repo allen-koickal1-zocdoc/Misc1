@@ -1,0 +1,19 @@
+Flow ID,Flow Name,Priority,Flow Type,Description,Entry Point,Happy Path Steps,Edge Cases,Automation Status,Test Location,CI Included,Last Validated,Owner,Notes
+CF-001,Example: Patient Booking - New User,P0,Booking,"New patient completes booking with a provider",https://www.zocdoc.com/search,"1. Search for specialty
+2. Select provider
+3. Choose time slot
+4. Create account
+5. Confirm booking","- Insurance mismatch
+- No availability
+- Existing patient",✅ Automated,BU/Marketplace/Booking/Flows/booking-flow.spec.js,Yes,2026-05-01,Your Name,
+CF-002,Example: Provider Login,P0,Authentication,"Provider logs into dashboard",https://www.zocdoc.com/provider/login,"1. Enter credentials
+2. Complete MFA
+3. Land on dashboard","- Forgot password
+- Locked account
+- First-time setup",🟡 Partial,BU/Infrastructure/Auth/Flows/provider-login.spec.js,Yes,2026-04-15,Your Name,MFA flow not automated
+CF-003,Example: Search Results Display,P1,Search,"Patient sees relevant search results",https://www.zocdoc.com/search,"1. Enter location
+2. Select specialty
+3. View results
+4. Apply filters","- No results
+- Location not found",✅ Automated,BU/Marketplace/Search-Relevance/Pages/search-results-page.spec.js,Yes,2026-05-03,Your Name,
+CF-004,[Add your flow here],P0/P1/P2,[Type],[Brief description],[URL or action],[Step-by-step],[List edge cases],✅/🟡/❌/🚫,[File path or N/A],Yes/No,[Date],[Name],[Any notes]

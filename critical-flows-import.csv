@@ -1,0 +1,55 @@
+Flow ID,Flow Name,Priority,Team,Description,Entry Point,Happy Path Steps,Edge Cases,Automation Status,Test Location,CI Included,Last Validated,Owner,Notes
+BOOK-001,New Patient Booking,P0,Booking,New user completes first booking,/search,"1. Search specialty
+2. Select provider
+3. Pick slot
+4. Create account
+5. Confirm","Insurance mismatch
+No slots available",✅ Automated,BU/Marketplace/Booking/Flows/booking-flow.spec.js,Yes,2026-05-01,Ayushi,
+BOOK-002,Returning Patient Booking,P0,Booking,Existing patient books appointment,/search,"1. Login
+2. Search
+3. Select provider
+4. Confirm","Saved insurance expired
+Account locked",🟡 Partial,BU/Marketplace/Booking/Flows/returning-patient.spec.js,Yes,2026-04-20,Ayushi,Login step needs work
+SEARCH-001,Basic Search,P0,Search Relevance,Patient searches for provider by specialty,/,"1. Enter location
+2. Select specialty
+3. View results","No results
+Invalid location",✅ Automated,BU/Marketplace/Search-Relevance/Flows/basic-search.spec.js,Yes,2026-05-03,Jyoti,
+SEARCH-002,Filtered Search,P1,Search Relevance,Patient applies filters to narrow results,/search,"1. Perform search
+2. Apply insurance filter
+3. Apply availability filter
+4. View filtered results","Filter combo yields no results
+Insurance not found",🟡 Partial,BU/Marketplace/Search-Relevance/Pages/search-filters.spec.js,Yes,2026-04-28,Jyoti,Gender filter not covered
+PERM-001,User Permission Assignment,P0,User Permissions,Admin assigns permissions to user,/provider/admin,"1. Login as admin
+2. Navigate to user management
+3. Select user
+4. Assign role
+5. Save","Role conflicts
+User not found",✅ Automated,BU/Provider/Acquisition/Account-User-Setup/Flows/permission-flow.spec.js,Yes,2026-05-05,Allen,
+ONBOARD-001,Provider Onboarding - New Practice,P0,Provider Onboarding,New provider completes onboarding,/join,"1. Start signup
+2. Enter practice info
+3. Add providers
+4. Configure schedule
+5. Go live","Duplicate NPI
+Invalid address",🟡 Partial,BU/Provider/Adoption/Provider-Onboarding/Flows/onboarding-flow.spec.js,Yes,2026-04-25,Simran,Schedule config partially covered
+ROSTER-001,Add Provider to Roster,P1,Provider Roster,Admin adds provider to existing practice,/provider/roster,"1. Login
+2. Navigate to roster
+3. Click add provider
+4. Enter details
+5. Submit","Duplicate provider
+License validation failure",❌ Manual Only,N/A,No,2026-04-10,Simran,Needs automation
+BILL-001,Payment Processing,P0,Provider Billing,Process provider billing payment,/provider/billing,"1. View invoice
+2. Select payment method
+3. Enter details
+4. Submit payment
+5. Confirm","Card declined
+Invalid amount",✅ Automated,BU/Provider/Acquisition/Provider-Billing/Flows/payment-flow.spec.js,Yes,2026-04-30,Vishesh,
+BD-001,Branded Directory Listing,P1,Branded Directory,Provider appears in branded directory,/directory,"1. Provider setup complete
+2. Directory syncs
+3. Patient searches directory
+4. Provider appears","Sync delay
+Missing required fields",🟡 Partial,BU/Practice-Solutions/Branded-Directory/Pages/directory-listing.spec.js,Yes,2026-04-22,Gautami,Sync timing flaky
+APPT-001,Appointment Confirmation,P0,Appointment Management,Patient confirms upcoming appointment,/appointments,"1. Receive reminder
+2. Click confirm link
+3. View appointment details
+4. Confirm","Link expired
+Already cancelled",✅ Automated,BU/Practice-Solutions/Appointment-Management/Flows/confirm-flow.spec.js,Yes,2026-05-02,Imroza,
