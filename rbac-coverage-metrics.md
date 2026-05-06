@@ -249,3 +249,219 @@
 | features-flow.spec.js | Provider/Adoption/Provider-Onboarding/Flows/ | Features page |
 | intake-flow.spec.js | Practice-Solutions/Branded-Directory/Flows/ | Intake functionality |
 | zvs-flow.spec.js | Practice-Solutions/Branded-Directory/Flows/ | ZVS functionality |
+
+---
+
+# Production Code Analysis - Additional Test Gaps
+
+**Date:** 2026-05-06  
+**Analysis Source:** provider-fe-monorepo, practice-user-permissions repos
+
+## Executive Summary
+
+Production code analysis reveals **53 new test cases** identified from route definitions and permission checks that are missing from the current test suite. These gaps span Home page, Your Website, Working Hours, Billing operations, Practice Settings, and more.
+
+---
+
+## NEW: Home Page Test Cases (Current Coverage: 0%)
+
+**Routes from production:** `provider-home-webapp/src/config/routes.ts`
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 105 | Verify Full Access user can access Home page | Full Access | P1 |
+| 106 | Verify Home page displays onboarding tasks correctly | Full Access | P1 |
+| 107 | Verify Full Access user can enroll in Marketplace | Full Access | P1 |
+| 108 | Verify Full Access user can enroll in Intake | Full Access | P2 |
+| 109 | Verify Full Access user can enroll in Partner Syndication | Full Access | P2 |
+| 110 | Verify Full Access user can complete identity verification | Full Access | P2 |
+| 111 | Verify Full Access user can schedule meeting with Zocdoc | Full Access | P3 |
+| 112 | Verify Full Access user can view Provider Profile from Home | Full Access | P2 |
+| 113 | Verify non-Full Access roles are redirected from Home | All other roles | P1 |
+
+---
+
+## NEW: Settings Routes Without Coverage
+
+**Routes from production:** `settings/src/config/routes.ts`
+
+### Your Website Page (Current Coverage: 0%)
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 114 | Verify Full Access user can access Your Website page | Full Access | P2 |
+| 115 | Verify Full Access user can manage vanity URL | Full Access | P2 |
+| 116 | Verify Full Access user can buy custom domain | Full Access | P3 |
+| 117 | Verify other roles CANNOT access Your Website | All non-FA roles | P2 |
+
+### Working Hours Page (Current Coverage: 0%)
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 118 | Verify Appt Mgmt user can access Working Hours page | FA; Appt Mgmt; PS | P1 |
+| 119 | Verify user can edit working hours for a provider | FA; Appt Mgmt; PS | P1 |
+| 120 | Verify user can add office hours | FA; Appt Mgmt; PS | P2 |
+| 121 | Verify Billing and SPO users CANNOT access Working Hours | Billing; SPO | P2 |
+
+### Alerter/Notifications Page
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 122 | Verify user can access alerter settings | FA; PS | P2 |
+| 123 | Verify user can configure notification preferences | FA; PS | P2 |
+
+### Patient Prescreener Page
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 124 | Verify PS user can access Patient Prescreener settings | FA; PS | P2 |
+| 125 | Verify PS user can configure prescreening questions | FA; PS | P2 |
+
+---
+
+## Billing Operations - Missing Test Cases
+
+**Routes from production:** `settings/src/config/routes.ts`
+
+| S.No | Test Case | API Route | Priority |
+|------|-----------|-----------|----------|
+| 126 | Billing user can add ACH payment method | POST_ADD_ACH | P1 |
+| 127 | Billing user can add credit card | POST_ADD_CREDIT_CARD | P1 |
+| 128 | Billing user can delete payment method | DELETE_PAYMENT_METHOD | P1 |
+| 129 | Billing user can set default payment method | POST_SET_DEFAULT_PAYMENT_METHOD | P1 |
+| 130 | Billing user can update billing email | PUT_UPDATE_PRACTICE_BILLING_EMAIL | P2 |
+| 131 | Billing user can update business address | PUT_UPDATE_PRIMARY_BUSINESS_ADDRESS | P2 |
+| 132 | Billing user can view/download bill summary | GET_BILL_SUMMARY | P1 |
+| 133 | Billing user can download invoice PDF | GET_INVOICE_PDF_DOWNLOAD_URL | P1 |
+
+---
+
+## Practice Settings - Missing Test Cases
+
+| S.No | Test Case | API Route | Priority |
+|------|-----------|-----------|----------|
+| 134 | PS user can create new location | CREATE_PRACTICE_LOCATION | P1 |
+| 135 | PS user can create virtual location | CREATE_VIRTUAL_PRACTICE_LOCATION | P2 |
+| 136 | PS user can update location | UPDATE_PRACTICE_LOCATION | P1 |
+| 137 | PS user can request delete location | REQUEST_DELETE_PRACTICE_LOCATION | P2 |
+| 138 | PS user can update location sort order | UPDATE_PRACTICE_LOCATION_SORT_ORDER | P3 |
+| 139 | PS user can upload practice logo | UPLOAD_PRACTICE_LOGO | P2 |
+| 140 | PS user can manage practice guidelines | PRACTICE_GUIDELINES_ROUTE | P2 |
+
+---
+
+## User Management - Additional Test Cases
+
+| S.No | Test Case | Priority |
+|------|-----------|----------|
+| 141 | Verify User Mgmt user CANNOT delete Full Access users | P1 |
+| 142 | Verify User Mgmt user CANNOT edit Full Access user roles | P1 |
+| 143 | Verify User Mgmt user can generate invitation link | P2 |
+| 144 | Verify invitation link expiration behavior | P3 |
+
+---
+
+## Settings Dropdown - Missing Test Cases
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 145 | Verify Invite Practices option is accessible | FA; PS; Billing; Appt Mgmt; SPO | P2 |
+| 146 | Verify Manage Referral Network is accessible | FA; PS | P2 |
+| 147 | Verify Help Center link works | All roles | P3 |
+| 148 | Verify Contact Us link works | All roles | P3 |
+
+---
+
+## Provider Profile Settings - Additional Routes
+
+| S.No | Test Case | Priority |
+|------|-----------|----------|
+| 149 | PS user can update provider statement | P2 |
+| 150 | PS user can update new patient guidance | P2 |
+| 151 | PS user can update provider gender/sexuality/faith | P2 |
+| 152 | PS user can update provider languages | P2 |
+| 153 | PS user can update provider education | P2 |
+| 154 | PS user can update board certifications | P2 |
+| 155 | PS user can update professional memberships | P2 |
+| 156 | PS user can update focus areas | P2 |
+| 157 | PS user can update treatment approaches | P2 |
+| 158 | PS user can update provider modalities | P2 |
+
+---
+
+## Products & Features Page
+
+| S.No | Test Case | Roles with Access | Priority |
+|------|-----------|-------------------|----------|
+| 159 | Verify Full Access user can access Products page | FA | P2 |
+| 160 | Verify Full Access user can view Synchronizer feature | FA; PS | P2 |
+| 161 | Verify PMS agreement flow | FA | P3 |
+
+---
+
+## Updated Coverage Summary
+
+| Category | Original Tests | New Tests Identified | Total | Priority Distribution |
+|----------|---------------|---------------------|-------|----------------------|
+| Home Page | 3 (missing) | 9 | 9 | P1: 3, P2: 4, P3: 2 |
+| Your Website | 1 (missing) | 4 | 4 | P2: 3, P3: 1 |
+| Working Hours | 4 (missing) | 4 | 4 | P1: 2, P2: 2 |
+| Billing Operations | 4 (missing) | 8 | 8 | P1: 5, P2: 3 |
+| Practice Settings | 6 (missing) | 7 | 7 | P1: 2, P2: 4, P3: 1 |
+| User Management | 1 (missing) | 4 | 4 | P1: 2, P2: 1, P3: 1 |
+| Settings Dropdown | 3 (missing) | 4 | 4 | P2: 2, P3: 2 |
+| Provider Profile | - | 10 | 10 | P2: 10 |
+| Products/Features | - | 3 | 3 | P2: 2, P3: 1 |
+| **TOTAL NEW** | - | **53** | 53 | **P1: 14, P2: 31, P3: 8** |
+
+---
+
+## Recommended Test File Structure
+
+```
+cypress/e2e/BU/Provider/Acquisition/Account-User-Setup/
+├── Pages/
+│   └── user-management-page.spec.js  # UPDATE: Add FA protection tests
+
+cypress/e2e/BU/Provider/Adoption/Provider-Onboarding/
+├── Flows/
+│   └── home-page-flow.spec.js        # NEW: Home page onboarding flows
+│
+├── Pages/
+│   └── home-page.spec.js             # NEW: Home page element tests
+
+cypress/e2e/BU/Provider/Retention/Preferences-Financial-Fit/
+├── Flows/
+│   └── working-hours-flow.spec.js    # NEW: Working hours management
+│
+├── Pages/
+│   ├── working-hours-page.spec.js    # NEW: Working hours page tests
+│   └── your-website-page.spec.js     # NEW: Your Website settings
+
+cypress/e2e/BU/Provider/Acquisition/Provider-Billing/
+├── Flows/
+│   └── billing-payment-flow.spec.js  # NEW: Payment method management
+│
+├── Pages/
+│   └── billing-settings-page.spec.js # UPDATE: Add ACH/CC/invoice tests
+```
+
+---
+
+## P1 Priority Tests - Implementation Order
+
+1. **Home page access for Full Access** (3 tests) - Core onboarding flow
+2. **Billing payment methods CRUD** (5 tests) - Financial operations
+3. **Working hours access** (2 tests) - Core settings functionality
+4. **User Mgmt Full Access protection** (2 tests) - Security critical
+5. **Practice location creation** (2 tests) - Core setup flow
+
+---
+
+## Notes
+
+- FGA (Fine-Grained Authorization) is used for permission checks in `practice-user-permissions` service
+- Permission checks in frontend use `usePracticeStaffRoles()` hook from `@zocdoc/provider-core`
+- Role spoofing tool available in development/Pulse for testing different roles
+- All roles have access to Account and Legal settings
+- Zo roles (PhoneBotPerformance, PhoneBotCallCenterRep) exist in codebase but are out of scope for this analysis
