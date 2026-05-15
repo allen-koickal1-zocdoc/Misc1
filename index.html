@@ -560,9 +560,9 @@
         <span class="dot d2"></span>/cypress-create
     </div>
     <h1 class="r rd1">Stop guessing.<br><span class="gr">Start knowing.</span></h1>
-    <p class="hero-p r rd2">Two Claude Code skills that turned E2E test maintenance from <strong>trial and error</strong> into <strong>evidence-based engineering</strong>. Every flaky fix and new test in the last 6 weeks — driven entirely by these skills.</p>
+    <p class="hero-p r rd2">Two Claude Code skills that turned E2E test maintenance from <strong>trial and error</strong> into <strong>evidence-based engineering</strong>. 32 PRs in 6 weeks — every flaky fix and new test driven entirely by these skills.</p>
     <div class="stat-strip r rd3">
-        <div class="stat"><div class="val" data-count="30">0</div><div class="lbl">PRs shipped</div></div>
+        <div class="stat"><div class="val" data-count="32">0</div><div class="lbl">PRs shipped</div></div>
         <div class="stat"><div class="val" data-count="0">0</div><div class="lbl">Re-fixes needed</div></div>
         <div class="stat"><div class="val" data-count="60">0</div><div class="lbl">Stress test standard</div></div>
         <div class="stat"><div class="val" data-count="15">0</div><div class="lbl">Avg minutes to fix</div></div>
@@ -854,14 +854,14 @@
     <div class="panel-inner">
         <div class="panel-header">
             <div class="eyebrow ey-green">Proof</div>
-            <h2>30+ PRs. Zero re-fixes.</h2>
+            <h2>32 PRs. Zero re-fixes.</h2>
             <p class="desc">Every PR below was driven by skill invocation — root cause analysis, pattern references, stress test verification. No exceptions.</p>
         </div>
 
         <!-- Big stats -->
         <div class="impact-stats">
             <div class="impact-stat">
-                <div class="is-val" data-count="30">0</div>
+                <div class="is-val" data-count="32">0</div>
                 <div class="is-lbl">PRs shipped (Apr–May)</div>
             </div>
             <div class="impact-stat">
@@ -904,13 +904,20 @@ cy.get('[data-test="role-filter"]')
                 </div>
             </div>
 
-            <!-- Investigate PRs -->
+            <!-- May PRs -->
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
                 <div class="pr-num">#2245 · May 14</div>
                 <h4>Robust sign-out in RBAC tests</h4>
                 <p class="cause">Nav dropdown parent display:none during render</p>
                 <p class="fix">Custom command: scroll reset + stability waits</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2244 · May 14</div>
+                <h4>Billing user flow — V2 UI</h4>
+                <p class="cause">Full rewrite: V2 billing migration</p>
+                <p class="fix">3-dot menu, radio buttons, ACH + card flows</p>
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
@@ -921,10 +928,24 @@ cy.get('[data-test="role-filter"]')
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2240 · May 14</div>
+                <h4>Insurance DB Refresh — catchall plan IDs</h4>
+                <p class="cause">DB Refresh changed hardcoded plan IDs across specs</p>
+                <p class="fix">Updated all hardcoded plan IDs to match new DB</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
                 <div class="pr-num">#2238 · May 13</div>
                 <h4>Cigna plan ID regex matching</h4>
                 <p class="cause">Insurance DB Refresh changed plan IDs</p>
                 <p class="fix">Regex supports both old and new IDs</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2237 · May 13</div>
+                <h4>Name-based insurance picker matching</h4>
+                <p class="cause">Plan ID selectors broke on profile-mobile-page</p>
+                <p class="fix">Switched to name-based matching for stability</p>
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
@@ -935,10 +956,68 @@ cy.get('[data-test="role-filter"]')
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2228 · May 12</div>
+                <h4>Insurance plan selectors for DB Refresh</h4>
+                <p class="cause">Insurance DB Refresh migration broke selectors</p>
+                <p class="fix">Updated selectors to match new plan structure</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
                 <div class="pr-num">#2227 · May 8</div>
                 <h4>RBAC dropdown timing</h4>
                 <p class="cause">Dropdown closing during page re-renders</p>
                 <p class="fix">Stability checks + visibility waits · 30x verified</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2221 · May 6</div>
+                <h4>Insurance picker no-carrier state</h4>
+                <p class="cause">Picker failed when no carrier pre-selected</p>
+                <p class="fix">Handle empty carrier state before selecting plan</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2217 · May 4</div>
+                <h4>Remove deprecated bob-flow.spec.js</h4>
+                <p class="cause">Superseded by new BOB booking flow tests</p>
+                <p class="fix">Clean removal after #2215 and #2216 shipped</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2216 · May 4</div>
+                <h4>BOB mobile booking flow</h4>
+                <p class="cause">Mobile viewport: iPhone X, Samsung S10</p>
+                <p class="fix">Booking + cleanup in single transactions</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2215 · May 3</div>
+                <h4>BOB booking flow E2E</h4>
+                <p class="cause">New: BOB JS migration end-to-end</p>
+                <p class="fix">14 assertions, 3 intercepts, cleanup · 15x verified</p>
+            </div>
+
+            <!-- April PRs -->
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2213 · Apr 29</div>
+                <h4>Listing-page FAQ assertion</h4>
+                <p class="cause">Contentful added UTM params post-rollout</p>
+                <p class="fix">Documented experiment timeline · 60x verified</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2211 · Apr 27</div>
+                <h4>Care Team search URL assertion</h4>
+                <p class="cause">URL added search_query param after update</p>
+                <p class="fix">Updated assertion to include new param</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2210 · Apr 27</div>
+                <h4>Flaky SPO campaign lifecycle</h4>
+                <p class="cause">Race condition in campaign state transitions</p>
+                <p class="fix">Stabilized with proper wait conditions</p>
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
@@ -949,10 +1028,59 @@ cy.get('[data-test="role-filter"]')
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
-                <div class="pr-num">#2213 · Apr 29</div>
-                <h4>Listing-page FAQ assertion</h4>
-                <p class="cause">Contentful added UTM params post-rollout</p>
-                <p class="fix">Documented experiment timeline · 60x verified</p>
+                <div class="pr-num">#2208 · Apr 23</div>
+                <h4>Provider sign-in test credentials</h4>
+                <p class="cause">Test credentials expired or rotated</p>
+                <p class="fix">Updated to current valid test account</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2203 · Apr 21</div>
+                <h4>Select specific provider in OON test</h4>
+                <p class="cause">Non-deterministic provider selection</p>
+                <p class="fix">Pin Clara Montgomery for consistent results</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2202 · Apr 21</div>
+                <h4>Calendar tutorial after welcome modal</h4>
+                <p class="cause">Welcome modal removed, test still expected it</p>
+                <p class="fix">Removed modal step, updated flow assertions</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2201 · Apr 21</div>
+                <h4>Intake mob: separate iPhone/iPad accounts</h4>
+                <p class="cause">Shared test account caused session conflicts</p>
+                <p class="fix">Separate accounts per device viewport</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2191 · Apr 20</div>
+                <h4>SPO insurance reinforcement test</h4>
+                <p class="cause">Flaky assertion on insurance reinforcement UI</p>
+                <p class="fix">Stabilized with proper intercepts and waits</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2181 · Apr 16</div>
+                <h4>Patient signin locked credentials</h4>
+                <p class="cause">Locked account test used expired credentials</p>
+                <p class="fix">Updated to current locked test account</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2177 · Apr 14</div>
+                <h4>SPO dashboard: Campaigns → Provider Groups</h4>
+                <p class="cause">UI label changed in prod deployment</p>
+                <p class="fix">Updated assertion to match new label</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2175 · Apr 14</div>
+                <h4>Specific test provider in listing booking</h4>
+                <p class="cause">Non-deterministic provider selection in search</p>
+                <p class="fix">Pin specific provider for consistent booking</p>
             </div>
             <div class="proof">
                 <div class="tag tag-inv">/investigate</div>
@@ -968,28 +1096,33 @@ cy.get('[data-test="role-filter"]')
                 <p class="cause">Third-party site added Cloudflare → 403</p>
                 <p class="fix">Switched to Zocdoc-controlled test page</p>
             </div>
-
-            <!-- Create PRs -->
             <div class="proof">
-                <div class="tag tag-cre">/create</div>
-                <div class="pr-num">#2244 · May 14</div>
-                <h4>Billing user flow — V2 UI</h4>
-                <p class="cause">Full rewrite: V2 billing migration</p>
-                <p class="fix">3-dot menu, radio buttons, ACH + card flows</p>
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2164 · Apr 2</div>
+                <h4>Exclude GQL query from RBAC auth checks</h4>
+                <p class="cause">getManualPracticeRecommendations triggered false auth failure</p>
+                <p class="fix">Added to GraphQL auth exclusion list</p>
             </div>
             <div class="proof">
-                <div class="tag tag-cre">/create</div>
-                <div class="pr-num">#2215 · May 3</div>
-                <h4>BOB booking flow E2E</h4>
-                <p class="cause">New: BOB JS migration end-to-end</p>
-                <p class="fix">14 assertions, 3 intercepts, cleanup · 15x verified</p>
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2162 · Apr 2</div>
+                <h4>Split Location selection test</h4>
+                <p class="cause">Test flaky in test directory environment</p>
+                <p class="fix">Split to run against production for stability</p>
             </div>
             <div class="proof">
-                <div class="tag tag-cre">/create</div>
-                <div class="pr-num">#2216 · May 4</div>
-                <h4>BOB mobile booking flow</h4>
-                <p class="cause">Mobile viewport: iPhone X, Samsung S10</p>
-                <p class="fix">Booking + cleanup in single transactions</p>
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2161 · Apr 1</div>
+                <h4>WordPress casing mismatch</h4>
+                <p class="cause">Production updated "Wordpress" → "WordPress"</p>
+                <p class="fix">Updated assertion to match prod casing</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-inv">/investigate</div>
+                <div class="pr-num">#2160 · Apr 1</div>
+                <h4>Run tests without test directory</h4>
+                <p class="cause">Test directory dependency caused environment issues</p>
+                <p class="fix">Configured tests to run against prod directly</p>
             </div>
         </div>
     </div>
