@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cypress Skills — AI-Powered E2E Test Automation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        :root{
+            --bg:#050507;
+            --surface:rgba(255,255,255,0.035);
+            --surface-solid:#0c0c10;
+            --border:rgba(255,255,255,0.06);
+            --border-h:rgba(255,255,255,0.12);
+            --text:#fafafa;
+            --text2:#a1a1aa;
+            --text3:#52525b;
+            --inv:#f59e0b;--inv2:#fbbf24;--inv-g:rgba(245,158,11,0.1);
+            --cre:#38bdf8;--cre2:#7dd3fc;--cre-g:rgba(56,189,248,0.1);
+            --green:#4ade80;--green-g:rgba(74,222,128,0.1);
+            --red:#f87171;--red-g:rgba(248,113,113,0.1);
+            --purple:#a78bfa;--purple-g:rgba(167,139,250,0.1);
+            --r:20px;--rp:999px;
+        }
+        body{
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            background:var(--bg);color:var(--text);
+            line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+        }
+
+        /* ---- Nav ---- */
+        nav{
+            position:fixed;top:0;left:0;right:0;z-index:100;
+            height:56px;display:flex;align-items:center;justify-content:center;
+            background:rgba(5,5,7,0.6);backdrop-filter:blur(24px);
+            border-bottom:1px solid transparent;transition:all .3s;
+        }
+        nav.scrolled{border-bottom-color:var(--border);background:rgba(5,5,7,0.92)}
+        nav .inner{max-width:1200px;width:100%;padding:0 2rem;display:flex;align-items:center;justify-content:space-between}
+        .brand{font-weight:800;font-size:.85rem;display:flex;align-items:center;gap:.5rem}
+        .brand i{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--inv),var(--cre));display:block}
+        .nav-links{display:flex;gap:.1rem;list-style:none}
+        .nav-links a{color:var(--text3);text-decoration:none;font-size:.76rem;font-weight:500;padding:.35rem .7rem;border-radius:8px;transition:all .2s}
+        .nav-links a:hover{color:var(--text2);background:rgba(255,255,255,0.04)}
+        @media(max-width:768px){.nav-links{display:none}}
+
+        /* ---- Anim ---- */
+        .r{opacity:0;transform:translateY(32px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+        .r.v{opacity:1;transform:none}
+        .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+        /* ---- Gradient mesh ---- */
+        .mesh{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+        .mesh .orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:.35;animation:float 20s ease-in-out infinite}
+        .mesh .orb:nth-child(1){width:600px;height:600px;background:var(--inv);top:-20%;left:-10%;animation-delay:0s}
+        .mesh .orb:nth-child(2){width:500px;height:500px;background:var(--cre);top:-15%;right:-5%;animation-delay:-7s}
+        .mesh .orb:nth-child(3){width:400px;height:400px;background:var(--purple);bottom:-10%;left:30%;animation-delay:-14s}
+        @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(.95)}}
+
+        /* ---- Hero ---- */
+        .hero{
+            min-height:100vh;display:flex;flex-direction:column;
+            justify-content:center;align-items:center;text-align:center;
+            padding:8rem 2rem 6rem;position:relative;
+        }
+        .hero .mesh .orb{opacity:.18}
+        .hero-eyebrow{
+            display:inline-flex;align-items:center;gap:.6rem;
+            font-size:.72rem;font-weight:600;color:var(--text2);
+            padding:.4rem 1rem;border-radius:var(--rp);
+            border:1px solid var(--border);background:rgba(255,255,255,0.02);
+            backdrop-filter:blur(12px);margin-bottom:2.5rem;
+            letter-spacing:.02em;
+        }
+        .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;animation:pulse 2s ease-in-out infinite}
+        .hero-eyebrow .dot.d1{background:var(--inv);box-shadow:0 0 12px var(--inv)}
+        .hero-eyebrow .dot.d2{background:var(--cre);box-shadow:0 0 12px var(--cre);animation-delay:1s}
+        @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+        .hero h1{
+            font-size:clamp(3.2rem,9vw,7rem);font-weight:900;
+            letter-spacing:-.055em;line-height:.92;margin-bottom:1.75rem;
+        }
+        .hero h1 .gr{
+            background:linear-gradient(135deg,var(--inv) 0%,#fcd34d 25%,var(--cre) 50%,var(--cre2) 75%,var(--purple) 100%);
+            background-size:200% 200%;
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+            animation:shimmer 6s ease-in-out infinite;
+        }
+        @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+        .hero-p{
+            font-size:clamp(1rem,2vw,1.25rem);color:var(--text2);
+            max-width:600px;line-height:1.7;margin-bottom:3rem;font-weight:400;
+        }
+        .hero-p strong{color:var(--text);font-weight:600}
+        .hero-cta{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;margin-bottom:4rem}
+        .btn{
+            display:inline-flex;align-items:center;gap:.5rem;
+            padding:.7rem 1.6rem;border-radius:var(--rp);
+            font-size:.85rem;font-weight:600;text-decoration:none;
+            transition:all .25s;cursor:pointer;border:none;font-family:inherit;
+        }
+        .btn-w{background:#fff;color:#000}
+        .btn-w:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,255,255,.15)}
+        .btn-g{background:transparent;color:var(--text2);border:1px solid var(--border)}
+        .btn-g:hover{border-color:var(--border-h);color:var(--text);background:var(--surface)}
+
+        /* hero metric strip */
+        .hero-metrics{
+            display:flex;gap:3rem;flex-wrap:wrap;justify-content:center;
+            padding:2rem 0;border-top:1px solid var(--border);
+        }
+        .hero-metric{text-align:center}
+        .hero-metric .val{
+            font-size:2.5rem;font-weight:900;letter-spacing:-.04em;
+            background:linear-gradient(135deg,var(--inv),var(--cre));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+        }
+        .hero-metric .lbl{font-size:.75rem;color:var(--text3);margin-top:.15rem;font-weight:500}
+
+        /* ---- Sections ---- */
+        .sec{max-width:1100px;margin:0 auto;padding:8rem 2rem}
+        .sec-sm{max-width:900px}
+        .eyebrow{
+            font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+            display:inline-block;padding:.25rem .75rem;border-radius:var(--rp);margin-bottom:1rem;
+        }
+        .ey-inv{background:var(--inv-g);color:var(--inv)}
+        .ey-cre{background:var(--cre-g);color:var(--cre)}
+        .ey-sh{background:var(--purple-g);color:var(--purple)}
+        .ey-gr{background:var(--green-g);color:var(--green)}
+        .sec h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:.75rem}
+        .sec .desc{color:var(--text2);font-size:1.05rem;max-width:560px;line-height:1.7;margin-bottom:3.5rem}
+        .divider{max-width:1100px;margin:0 auto;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+        /* ---- Split hero for each skill ---- */
+        .skill-hero{
+            display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
+            min-height:70vh;
+        }
+        @media(max-width:900px){.skill-hero{grid-template-columns:1fr;gap:2rem;min-height:auto}}
+        .skill-hero .text h2{margin-bottom:.5rem}
+        .skill-hero .text .desc{margin-bottom:2rem}
+        .skill-hero .text .features{list-style:none;display:flex;flex-direction:column;gap:.75rem}
+        .skill-hero .text .features li{
+            display:flex;align-items:flex-start;gap:.75rem;
+            font-size:.9rem;color:var(--text2);line-height:1.5;
+        }
+        .skill-hero .text .features li .fi{
+            width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+            justify-content:center;font-size:.9rem;flex-shrink:0;margin-top:2px;
+        }
+        .fi-inv{background:var(--inv-g)}.fi-cre{background:var(--cre-g)}
+
+        /* ---- Terminal ---- */
+        .term{
+            background:var(--surface-solid);border:1px solid var(--border);
+            border-radius:16px;overflow:hidden;
+            font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.85;
+            box-shadow:0 24px 80px -12px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03);
+        }
+        .term-bar{
+            background:rgba(255,255,255,.02);padding:.6rem 1rem;
+            display:flex;gap:7px;align-items:center;border-bottom:1px solid var(--border);
+        }
+        .td{width:10px;height:10px;border-radius:50%}
+        .td.r{background:#ff5f57}.td.y{background:#febc2e}.td.g{background:#28c840}
+        .term-title{margin-left:.75rem;font-size:.68rem;color:var(--text3);font-family:'Inter',sans-serif;font-weight:500}
+        .term-tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto}
+        .tt{
+            padding:.5rem 1rem;font-size:.7rem;font-weight:500;
+            color:var(--text3);cursor:pointer;border:none;background:none;
+            font-family:'Inter',sans-serif;white-space:nowrap;
+            border-bottom:2px solid transparent;transition:all .2s;
+        }
+        .tt:hover{color:var(--text2)}
+        .tt.a{color:var(--text)}
+        .tt.a.inv{border-bottom-color:var(--inv)}
+        .tt.a.cre{border-bottom-color:var(--cre)}
+        .term-body{padding:1.25rem 1.5rem;overflow-x:auto;min-height:260px}
+        .ts{display:none}.ts.a{display:block}
+        .term-body .p{color:var(--inv);font-weight:600}
+        .term-body .pb{color:var(--cre);font-weight:600}
+        .term-body .ok{color:var(--green)}
+        .term-body .i{color:#67e8f9}
+        .term-body .w{color:#fbbf24}
+        .term-body .d{color:var(--text3)}
+        .term-body .e{color:var(--red)}
+        .term-body .f{color:var(--text2)}
+        .term-body .b{font-weight:600;color:var(--text)}
+
+        /* ---- Typewriter effect ---- */
+        .tw{overflow:hidden;white-space:nowrap;border-right:2px solid var(--inv);width:0;animation:typing 2s steps(40) 1s forwards,blink .7s step-end infinite}
+        @keyframes typing{to{width:100%}}
+        @keyframes blink{50%{border-color:transparent}}
+
+        /* ---- Impact proof cards ---- */
+        .proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+        @media(max-width:900px){.proof-grid{grid-template-columns:1fr}}
+        .proof{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:16px;padding:1.75rem;position:relative;overflow:hidden;
+            transition:all .3s;
+        }
+        .proof:hover{border-color:var(--border-h);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+        .proof::after{
+            content:'';position:absolute;top:0;left:0;right:0;height:2px;
+            background:linear-gradient(90deg,transparent,var(--inv),var(--cre),transparent);
+            opacity:0;transition:opacity .3s;
+        }
+        .proof:hover::after{opacity:1}
+        .proof .pr-num{font-size:.7rem;font-weight:700;color:var(--purple);font-family:'JetBrains Mono',monospace;margin-bottom:.5rem}
+        .proof h4{font-size:.92rem;font-weight:700;margin-bottom:.5rem;line-height:1.3}
+        .proof .cause{font-size:.8rem;color:var(--text2);line-height:1.5;margin-bottom:.5rem}
+        .proof .fix{font-size:.78rem;color:var(--text3);line-height:1.45}
+        .proof .tag{
+            display:inline-block;font-size:.55rem;font-weight:700;letter-spacing:.1em;
+            text-transform:uppercase;padding:.2rem .5rem;border-radius:var(--rp);margin-bottom:.75rem;
+        }
+        .tag-inv{background:var(--inv-g);color:var(--inv)}
+        .tag-cre{background:var(--cre-g);color:var(--cre)}
+        .tag-pat{background:var(--purple-g);color:var(--purple)}
+
+        /* featured proof — spans full width */
+        .proof-featured{
+            grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+            padding:2.5rem;
+            background:linear-gradient(135deg,rgba(245,158,11,.03),rgba(56,189,248,.03));
+            border-color:rgba(255,255,255,.08);
+        }
+        @media(max-width:768px){.proof-featured{grid-template-columns:1fr}}
+        .proof-featured .pf-left .pr-num{font-size:.8rem}
+        .proof-featured .pf-left h4{font-size:1.1rem;margin-bottom:.75rem}
+        .proof-featured .pf-left .cause{font-size:.88rem}
+        .proof-featured .pf-right{
+            background:rgba(0,0,0,.3);border-radius:12px;padding:1.25rem;
+            font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;
+            color:var(--text2);overflow-x:auto;
+        }
+
+        /* ---- Before/After split ---- */
+        .ba{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+        @media(max-width:768px){.ba{grid-template-columns:1fr}}
+        .ba-side{padding:2rem}
+        .ba-side.bef{background:rgba(248,113,113,.03);border-right:1px solid var(--border)}
+        .ba-side.aft{background:rgba(74,222,128,.03)}
+        @media(max-width:768px){.ba-side.bef{border-right:none;border-bottom:1px solid var(--border)}}
+        .ba-side h3{font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem}
+        .ba-side.bef h3{color:var(--red)}.ba-side.aft h3{color:var(--green)}
+        .ba-side ul{list-style:none}
+        .ba-side li{
+            padding:.4rem 0;font-size:.88rem;color:var(--text2);
+            display:flex;align-items:flex-start;gap:.6rem;line-height:1.5;
+        }
+        .ba-side li .ic{flex-shrink:0;font-size:.82rem;margin-top:2px}
+        .ba-side.bef .ic{color:var(--red)}.ba-side.aft .ic{color:var(--green)}
+        .ba-side li code{
+            background:rgba(255,255,255,.06);padding:.1rem .35rem;border-radius:4px;
+            font-size:.76rem;font-family:'JetBrains Mono',monospace;color:var(--cre2);
+        }
+
+        /* ---- Evolution ---- */
+        .evo-track{position:relative;display:flex;flex-direction:column;gap:0}
+        .evo-item{
+            display:grid;grid-template-columns:80px 1fr;gap:2rem;
+            padding:2.5rem 0;border-bottom:1px solid var(--border);
+            transition:all .3s;
+        }
+        .evo-item:last-child{border-bottom:none}
+        .evo-item:hover{background:rgba(255,255,255,.01)}
+        .evo-num{
+            font-size:3.5rem;font-weight:900;line-height:1;
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+            opacity:.25;
+        }
+        .evo-num.ni{background:linear-gradient(135deg,var(--inv),#fcd34d)}
+        .evo-num.nc{background:linear-gradient(135deg,var(--cre),#a5f3fc)}
+        .evo-content h4{font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+        .evo-content p{font-size:.9rem;color:var(--text2);line-height:1.6;max-width:600px}
+        .evo-content p code{
+            background:rgba(255,255,255,.06);padding:.1rem .35rem;border-radius:4px;
+            font-size:.78rem;font-family:'JetBrains Mono',monospace;color:var(--cre2);
+        }
+        @media(max-width:768px){
+            .evo-item{grid-template-columns:50px 1fr;gap:1rem}
+            .evo-num{font-size:2rem}
+        }
+
+        /* ---- Future ---- */
+        .future-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+        @media(max-width:768px){.future-row{grid-template-columns:1fr}}
+        .fc{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:16px;padding:1.75rem;transition:border-color .2s;
+        }
+        .fc:hover{border-color:var(--border-h)}
+        .fc h4{font-size:.95rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+        .fc p{font-size:.82rem;color:var(--text2);line-height:1.55}
+        .pill{
+            display:inline-block;font-size:.55rem;font-weight:700;
+            padding:.15rem .5rem;border-radius:var(--rp);letter-spacing:.04em;
+        }
+        .pill-done{background:var(--green-g);color:var(--green)}
+        .pill-next{background:var(--cre-g);color:var(--cre)}
+        .pill-later{background:var(--inv-g);color:var(--inv)}
+
+        /* ---- Footer ---- */
+        footer{
+            text-align:center;padding:4rem 2rem;color:var(--text3);font-size:.78rem;
+            border-top:1px solid var(--border);
+        }
+        footer strong{color:var(--text);font-weight:600}
+        .footer-pills{display:flex;justify-content:center;gap:.5rem;margin-bottom:.75rem}
+        .footer-pills span{
+            font-size:.7rem;padding:.25rem .7rem;border-radius:var(--rp);
+            border:1px solid var(--border);
+        }
+
+        /* ---- Simulator ---- */
+        .sim-wrap{position:relative}
+        .sim-pipeline{
+            display:flex;align-items:center;justify-content:center;gap:0;
+            margin-bottom:2.5rem;position:relative;
+        }
+        .sim-step{
+            display:flex;flex-direction:column;align-items:center;gap:.5rem;
+            position:relative;z-index:1;flex:1;max-width:160px;
+        }
+        .sim-dot{
+            width:40px;height:40px;border-radius:50%;
+            border:2px solid var(--border);background:var(--bg);
+            display:flex;align-items:center;justify-content:center;
+            font-size:.85rem;transition:all .5s cubic-bezier(.16,1,.3,1);
+            position:relative;
+        }
+        .sim-dot::after{
+            content:'';position:absolute;inset:-4px;border-radius:50%;
+            border:2px solid transparent;transition:all .5s;
+        }
+        .sim-step.active .sim-dot{
+            border-color:var(--inv);background:var(--inv-g);
+            box-shadow:0 0 24px rgba(245,158,11,.25);
+            transform:scale(1.15);
+        }
+        .sim-step.active .sim-dot::after{border-color:rgba(245,158,11,.3);animation:ring-pulse 1.5s ease-in-out infinite}
+        @keyframes ring-pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.3);opacity:0}}
+        .sim-step.done .sim-dot{
+            border-color:var(--green);background:var(--green-g);
+            box-shadow:0 0 16px rgba(74,222,128,.15);
+        }
+        .sim-step-label{
+            font-size:.68rem;font-weight:600;color:var(--text3);
+            text-align:center;transition:color .4s;letter-spacing:.02em;
+        }
+        .sim-step.active .sim-step-label{color:var(--inv)}
+        .sim-step.done .sim-step-label{color:var(--green)}
+        .sim-connector{
+            height:2px;flex:1;max-width:80px;
+            background:var(--border);position:relative;overflow:hidden;
+        }
+        .sim-connector::after{
+            content:'';position:absolute;inset:0;
+            background:linear-gradient(90deg,var(--inv),var(--green));
+            transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.16,1,.3,1);
+        }
+        .sim-connector.filled::after{transform:scaleX(1)}
+        @media(max-width:768px){
+            .sim-pipeline{flex-wrap:wrap;gap:.5rem}
+            .sim-connector{display:none}
+            .sim-step{flex:0 0 auto}
+        }
+
+        /* Sim terminal */
+        .sim-term{
+            background:#08080c;border:1px solid var(--border);
+            border-radius:16px;overflow:hidden;
+            box-shadow:0 32px 80px -16px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.02),
+                        0 0 120px -40px rgba(245,158,11,.08),0 0 120px -40px rgba(56,189,248,.06);
+        }
+        .sim-bar{
+            background:rgba(255,255,255,.015);padding:.6rem 1rem;
+            display:flex;align-items:center;border-bottom:1px solid var(--border);
+        }
+        .sim-bar .dots{display:flex;gap:7px}
+        .sim-bar .title{
+            margin-left:auto;font-size:.68rem;color:var(--text3);
+            font-family:'Inter',sans-serif;font-weight:500;
+        }
+        .sim-body{
+            font-family:'JetBrains Mono',monospace;font-size:.76rem;line-height:1.9;
+            padding:1.5rem 1.75rem;min-height:340px;position:relative;
+            overflow-y:auto;max-height:400px;
+        }
+        .sim-body .line{opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+        .sim-body .line.show{opacity:1;transform:none}
+        .sim-body .cursor{
+            display:inline-block;width:8px;height:16px;
+            background:var(--inv);vertical-align:text-bottom;
+            animation:blink-cursor .8s step-end infinite;margin-left:2px;
+        }
+        @keyframes blink-cursor{50%{opacity:0}}
+        .sim-body .sp{color:var(--inv);font-weight:600}
+        .sim-body .so{color:var(--green)}
+        .sim-body .si{color:#67e8f9}
+        .sim-body .sw{color:#fbbf24}
+        .sim-body .sd{color:var(--text3)}
+        .sim-body .se{color:var(--red)}
+        .sim-body .sf{color:var(--text2)}
+        .sim-body .sb{font-weight:600;color:var(--text)}
+
+        /* Controls */
+        .sim-controls{
+            display:flex;align-items:center;justify-content:center;
+            gap:1rem;margin-top:1.5rem;
+        }
+        .sim-btn{
+            width:44px;height:44px;border-radius:50%;border:1px solid var(--border);
+            background:var(--surface);color:var(--text);cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            font-size:1rem;transition:all .2s;
+        }
+        .sim-btn:hover{border-color:var(--border-h);background:var(--surface-hover,rgba(255,255,255,.06));transform:scale(1.05)}
+        .sim-btn.primary{
+            width:52px;height:52px;
+            background:linear-gradient(135deg,var(--inv),var(--cre));
+            border:none;color:var(--bg);font-size:1.2rem;
+        }
+        .sim-btn.primary:hover{transform:scale(1.1);box-shadow:0 0 30px rgba(245,158,11,.25)}
+        .sim-progress{
+            flex:1;max-width:300px;height:3px;border-radius:2px;
+            background:var(--border);overflow:hidden;
+        }
+        .sim-progress-fill{
+            height:100%;border-radius:2px;width:0%;
+            background:linear-gradient(90deg,var(--inv),var(--cre));
+            transition:width .3s;
+        }
+        .sim-status{
+            font-size:.72rem;color:var(--text3);font-weight:500;
+            min-width:120px;text-align:right;
+        }
+
+        /* ---- Scrollbar ---- */
+        ::-webkit-scrollbar{width:6px;height:6px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        ::-webkit-scrollbar-thumb:hover{background:var(--border-h)}
+
+        /* ---- Inline code ---- */
+        p code,li code{
+            background:rgba(255,255,255,.06);padding:.1rem .35rem;border-radius:4px;
+            font-size:.78rem;font-family:'JetBrains Mono',monospace;color:var(--cre2);
+        }
+
+        @media(max-width:768px){
+            .sec{padding:5rem 1.25rem}
+            .proof-grid{grid-template-columns:1fr}
+            .hero{padding:6rem 1.25rem 4rem}
+            .hero-metrics{gap:1.5rem}
+        }
+    </style>
+</head>
+<body>
+
+<nav id="nav">
+    <div class="inner">
+        <div class="brand"><i></i>Cypress Skills</div>
+        <ul class="nav-links">
+            <li><a href="#simulator">Live Demo</a></li>
+            <li><a href="#investigate">/investigate</a></li>
+            <li><a href="#create">/create</a></li>
+            <li><a href="#proof">Impact</a></li>
+            <li><a href="#evolution">Evolution</a></li>
+            <li><a href="#future">Future</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ====================== HERO ====================== -->
+<section class="hero">
+    <div class="mesh">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+    <div class="hero-eyebrow r">
+        <span class="dot d1"></span>/cypress-investigate
+        <span style="color:var(--text3)">&</span>
+        <span class="dot d2"></span>/cypress-create
+    </div>
+    <h1 class="r rd1">Stop guessing.<br><span class="gr">Start knowing.</span></h1>
+    <p class="hero-p r rd2">Two Claude Code skills that turned E2E test maintenance from <strong>trial and error</strong> into <strong>evidence-based engineering</strong>. Every flaky fix and new test in the last 6 weeks — driven entirely by these skills.</p>
+    <div class="hero-cta r rd3">
+        <a href="#investigate" class="btn btn-w">See how it works</a>
+        <a href="#proof" class="btn btn-g">View real PRs →</a>
+    </div>
+    <div class="hero-metrics r rd3">
+        <div class="hero-metric"><div class="val" data-count="30">0</div><div class="lbl">PRs shipped</div></div>
+        <div class="hero-metric"><div class="val" data-count="0">0</div><div class="lbl">Re-fixes needed</div></div>
+        <div class="hero-metric"><div class="val" data-count="60">0</div><div class="lbl">Stress test standard</div></div>
+        <div class="hero-metric"><div class="val" data-count="15">0</div><div class="lbl">Avg minutes to fix</div></div>
+    </div>
+</section>
+
+<!-- ====================== BEFORE / AFTER ====================== -->
+<div class="sec r" style="padding-top:2rem;padding-bottom:4rem">
+    <div class="ba">
+        <div class="ba-side bef">
+            <h3>Before — Jan to Mar</h3>
+            <ul>
+                <li><span class="ic">✕</span>Guess selectors, inspect in browser</li>
+                <li><span class="ic">✕</span>No root cause — just try things until CI passes</li>
+                <li><span class="ic">✕</span>Run once, push, hope</li>
+                <li><span class="ic">✕</span>Boilerplate PR descriptions, no context</li>
+                <li><span class="ic">✕</span>Same flake resurfaces weeks later</li>
+            </ul>
+        </div>
+        <div class="ba-side aft">
+            <h3>After — Apr to now</h3>
+            <ul>
+                <li><span class="ic">✓</span>Search prod repos for real <code>data-test</code> selectors</li>
+                <li><span class="ic">✓</span>Root cause traced to exact file, line, causing PR</li>
+                <li><span class="ic">✓</span>Stress test 20–60x in CI before merge</li>
+                <li><span class="ic">✓</span>Self-documenting: root cause + deliberate choices</li>
+                <li><span class="ic">✓</span>Zero re-fixes — first fix sticks, permanently</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ====================== LIVE SIMULATOR ====================== -->
+<section class="sec" id="simulator">
+    <div style="text-align:center">
+        <div class="eyebrow ey-inv r">Live Demo</div>
+        <h2 class="r" style="max-width:700px;margin:0 auto .75rem">Watch /cypress-investigate solve a real flaky test</h2>
+        <p class="desc r" style="max-width:560px;margin:0 auto 3rem;text-align:center">This is what actually happens when the skill runs. From Jira ticket to merged PR — fully automated, zero guesswork.</p>
+    </div>
+
+    <!-- Pipeline tracker -->
+    <div class="sim-pipeline r">
+        <div class="sim-step active" data-phase="0"><div class="sim-dot">🎫</div><div class="sim-step-label">Ticket</div></div>
+        <div class="sim-connector" data-conn="0"></div>
+        <div class="sim-step" data-phase="1"><div class="sim-dot">📡</div><div class="sim-step-label">Fetch CI</div></div>
+        <div class="sim-connector" data-conn="1"></div>
+        <div class="sim-step" data-phase="2"><div class="sim-dot">🔬</div><div class="sim-step-label">Analyze</div></div>
+        <div class="sim-connector" data-conn="2"></div>
+        <div class="sim-step" data-phase="3"><div class="sim-dot">🎯</div><div class="sim-step-label">Root Cause</div></div>
+        <div class="sim-connector" data-conn="3"></div>
+        <div class="sim-step" data-phase="4"><div class="sim-dot">🔧</div><div class="sim-step-label">Fix</div></div>
+        <div class="sim-connector" data-conn="4"></div>
+        <div class="sim-step" data-phase="5"><div class="sim-dot">🔁</div><div class="sim-step-label">Stress Test</div></div>
+        <div class="sim-connector" data-conn="5"></div>
+        <div class="sim-step" data-phase="6"><div class="sim-dot">🚀</div><div class="sim-step-label">Ship PR</div></div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="sim-wrap r rd1">
+        <div class="sim-term">
+            <div class="sim-bar">
+                <div class="dots"><div class="td r"></div><div class="td y"></div><div class="td g"></div></div>
+                <div class="title">Claude Code — /cypress-investigate</div>
+            </div>
+            <div class="sim-body" id="sim-output"></div>
+        </div>
+        <div class="sim-controls">
+            <button class="sim-btn" id="sim-restart" title="Restart">↺</button>
+            <button class="sim-btn primary" id="sim-play" title="Play / Pause">▶</button>
+            <div class="sim-progress"><div class="sim-progress-fill" id="sim-progress"></div></div>
+            <div class="sim-status" id="sim-status">Ready to play</div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================== /CYPRESS-INVESTIGATE ====================== -->
+<section class="sec" id="investigate">
+    <div class="skill-hero">
+        <div class="text">
+            <div class="eyebrow ey-inv r">/cypress-investigate</div>
+            <h2 class="r">Trace the root cause.<br>Fix it once.</h2>
+            <p class="desc r">Fetches failures from TeamCity, runs pattern analysis, traces through production code, and outputs fixes that never need to be revisited.</p>
+            <ul class="features">
+                <li class="r"><span class="fi fi-inv">🎯</span><div><strong>Fetch & cluster</strong> — Pulls from TeamCity, groups by spec/error, assigns P1–P4 priority</div></li>
+                <li class="r rd1"><span class="fi fi-inv">🔬</span><div><strong>Pattern analysis</strong> — Runs scripts to detect timing issues, brittle selectors, race conditions</div></li>
+                <li class="r rd2"><span class="fi fi-inv">🔗</span><div><strong>PR blame</strong> — Traces failure to the exact production PR that introduced it</div></li>
+                <li class="r rd3"><span class="fi fi-inv">🛡️</span><div><strong>Deliberate fixes</strong> — Documents what was NOT done. No <code>force:true</code>, no hardcoded waits</div></li>
+            </ul>
+        </div>
+        <div class="r rd2">
+            <div class="term">
+                <div class="term-bar">
+                    <div class="td r"></div><div class="td y"></div><div class="td g"></div>
+                    <span class="term-title">/cypress-investigate</span>
+                </div>
+                <div class="term-tabs">
+                    <button class="tt a inv" data-s="i1">Fetch</button>
+                    <button class="tt inv" data-s="i2">Analyze</button>
+                    <button class="tt inv" data-s="i3">Root Cause</button>
+                    <button class="tt inv" data-s="i4">Verify</button>
+                </div>
+                <div class="term-body">
+                    <div class="ts a" id="s-i1">
+<span class="p">&gt;</span> /cypress-investigate practice-settings-user-flow
+
+<span class="d">Fetching from TeamCity...</span>
+<span class="d">Build: AllCypressTests — last 10 runs</span>
+
+<span class="w">Found 3 failures (30% rate)</span>
+
+<span class="b">Cluster 1:</span> providers-page.spec.js
+  Error: <span class="e">Timed out: expected visible</span>
+  Selector: <span class="f">[data-test="role-filter-checkbox"]</span>
+  Onset: <span class="w">Apr 14</span>
+
+<span class="d">Mapped to:</span> <span class="i">provider-fe-monorepo/spo-webapp</span>
+<span class="d">Priority:</span> <span class="w">P1 — fix now</span>
+                    </div>
+                    <div class="ts" id="s-i2">
+<span class="d">Running analyze-patterns.py...</span>
+
+<span class="w">⚠ TIMING-003</span> Click without visibility assertion
+<span class="w">⚠ NETWORK-007</span> cy.visit() without preceding intercept
+
+<span class="d">Running find-causing-pr.py...</span>
+<span class="d">git blame RoleFilter.tsx:47...</span>
+
+<span class="ok">✓ PR spo-webapp#892 (Apr 12)</span>
+  Changed: Added async data fetch before render
+  <span class="ok">Timeline matches failure onset</span>
+                    </div>
+                    <div class="ts" id="s-i3">
+<span class="e">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="b">ROOT CAUSE: Bad Pattern (TIMING + NETWORK)</span>
+<span class="e">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+Checkbox click races dropdown render.
+<span class="i">providers:batchGet</span> triggers re-render,
+detaching the element mid-click.
+
+<span class="b">Fix:</span>
+  1. <span class="i">cy.intercept("**/providers:batchGet")</span>
+  2. <span class="i">cy.wait("@batchGet")</span> after visit
+  3. <span class="i">.should("be.visible")</span> before click
+
+<span class="b">NOT doing:</span>
+  <span class="e">✕ { force: true }</span> — masks real bugs
+  <span class="e">✕ cy.wait(2000)</span> — brittle
+                    </div>
+                    <div class="ts" id="s-i4">
+<span class="w">Stress testing (30 iterations)...</span>
+
+<span class="d">Pushing to CI...</span>
+<span class="d">120s... queued</span>
+<span class="d">270s... running (18/30)</span>
+<span class="d">270s... <span class="ok">30/30 passed</span></span>
+
+<span class="ok">✅ All 30 iterations passed</span>
+<span class="d">Removing loop, pushing clean commit</span>
+
+<span class="ok">✅ PR #2186 ready for review</span>
+  Flakes: <span class="ok">0</span> | Pattern: <span class="w">TIMING+NETWORK</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================== /CYPRESS-CREATE ====================== -->
+<section class="sec" id="create">
+    <div class="skill-hero">
+        <div class="r rd2" style="order:0">
+            <div class="term">
+                <div class="term-bar">
+                    <div class="td r"></div><div class="td y"></div><div class="td g"></div>
+                    <span class="term-title">/cypress-create</span>
+                </div>
+                <div class="term-tabs">
+                    <button class="tt a cre" data-s="c1">Input</button>
+                    <button class="tt cre" data-s="c2">Research</button>
+                    <button class="tt cre" data-s="c3">Generate</button>
+                    <button class="tt cre" data-s="c4">Ship</button>
+                </div>
+                <div class="term-body">
+                    <div class="ts a" id="s-c1">
+<span class="pb">&gt;</span> /cypress-create PTR-4764
+
+<span class="d">Input type: Jira ticket</span>
+<span class="d">Fetching from Jira...</span>
+
+<span class="b">BOB JS migration — booking flow E2E</span>
+  ACs: tracking params, booking, inbox
+  Labels: Marketplace, Booking
+
+<span class="d">Classification:</span> <span class="b">Flow test</span>
+  Multi-page: search → book → confirm → inbox
+                    </div>
+                    <div class="ts" id="s-c2">
+<span class="i">Researching...</span>
+
+<span class="d">Cypress Cloud: no existing coverage</span>
+<span class="d">Local sandbox: bob-page.spec.js (page only)</span>
+  <span class="ok">✓ Found iframe pattern, test URL format</span>
+
+<span class="d">GitHub search: frontend-monorepo/bob/</span>
+<span class="ok">12 data-test attributes found</span>
+  <span class="f">[data-test="bob-booking-button"]</span>
+  <span class="f">[data-test="bob-confirmation-message"]</span>
+  <span class="f">[data-test="bob-tracking-pixel"]</span>
+
+<span class="d">Patterns loaded:</span>
+  <span class="ok">TIMING-012</span> iframe load wait
+  <span class="ok">NETWORK-003</span> stub analytics
+  <span class="ok">STATE-005</span> post-booking cleanup
+                    </div>
+                    <div class="ts" id="s-c3">
+<span class="i">Generating test...</span>
+
+Path: <span class="ok">BU/Marketplace/Booking/Flows/
+  bob-booking-flow.spec.js</span>
+
+<span class="b">Assertions:</span> <span class="ok">14</span>
+  text, visibility, navigation, tracking
+<span class="b">Intercepts:</span> <span class="ok">3</span>
+  booking API, tracking, inbox
+<span class="b">Cleanup:</span> <span class="ok">cancel appointment in afterEach</span>
+
+<span class="ok">✅ Test generated. Ready for review.</span>
+                    </div>
+                    <div class="ts" id="s-c4">
+<span class="pb">&gt;</span> approved
+
+<span class="ok">PR #2215 created (draft)</span>
+
+<span class="d">Stress testing 15 iterations...</span>
+<span class="d">270s... <span class="ok">15/15 passed</span></span>
+
+<span class="d">Checking CodeRabbit...</span>
+  <span class="w">P2:</span> "Add anchor assertion after visit"
+  <span class="i">→ Fixed (commit def5678)</span>
+
+<span class="ok">✅ PR ready — CI green, reviews addressed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text" style="order:1">
+            <div class="eyebrow ey-cre r">/cypress-create</div>
+            <h2 class="r">Generate tests<br>that don't flake.</h2>
+            <p class="desc r">From Jira ticket to merged PR — researches prod code, finds real selectors, applies battle-tested patterns.</p>
+            <ul class="features">
+                <li class="r"><span class="fi fi-cre">📋</span><div><strong>Smart input</strong> — Accepts Jira tickets, GitHub PRs, or plain descriptions</div></li>
+                <li class="r rd1"><span class="fi fi-cre">🔎</span><div><strong>Research-first</strong> — Searches Cypress Cloud, sandbox, and prod code before writing anything</div></li>
+                <li class="r rd2"><span class="fi fi-cre">📁</span><div><strong>BU-aware routing</strong> — Classifies Flow vs Page, routes to correct hierarchy</div></li>
+                <li class="r rd3"><span class="fi fi-cre">🤖</span><div><strong>Full PR lifecycle</strong> — Stress tests, monitors CI, triages CodeRabbit comments</div></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================== IMPACT PROOF ====================== -->
+<section class="sec" id="proof">
+    <div class="eyebrow ey-sh r">Impact</div>
+    <h2 class="r">30+ PRs. Zero re-fixes.</h2>
+    <p class="desc r">Every PR below was driven by skill invocation — root cause analysis, pattern references, stress test verification.</p>
+
+    <div class="proof-grid">
+        <!-- Featured -->
+        <div class="proof proof-featured r">
+            <div class="pf-left">
+                <div class="pr-num">#2186</div>
+                <div class="tag tag-inv">/investigate</div>
+                <h4>Stabilize practice settings providers page</h4>
+                <p class="cause">Role filter checkbox click raced against dropdown rendering. <code>providers:batchGet</code> response triggered re-render, detaching the element mid-click.</p>
+            </div>
+            <div class="pf-right">
+<span class="b">// What we did</span>
+cy.intercept("**/providers:batchGet").as("batch")
+cy.visit("/provider/settings/providers")
+cy.wait("@batch")
+cy.get('[data-test="role-filter"]')
+  .should("be.visible")
+  .click()
+
+<span class="e">// What we did NOT do</span>
+<span class="e">// No { force: true } — masks real bugs</span>
+<span class="e">// No cy.wait(2000) — brittle delay</span>
+<span class="ok">// Verified: 30x stress test, 0 flakes</span>
+            </div>
+        </div>
+
+        <!-- Investigate PRs -->
+        <div class="proof r">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2245 · May 14</div>
+            <h4>Robust sign-out in RBAC tests</h4>
+            <p class="cause">Nav dropdown parent display:none during render</p>
+            <p class="fix">Custom command: scroll reset + stability waits</p>
+        </div>
+        <div class="proof r rd1">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2242 · May 14</div>
+            <h4>BOB timesgrid slot selection</h4>
+            <p class="cause">First day column may have no appointments</p>
+            <p class="fix">Combined selector targets columns with timeslots</p>
+        </div>
+        <div class="proof r rd2">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2238 · May 13</div>
+            <h4>Cigna plan ID regex matching</h4>
+            <p class="cause">Insurance DB Refresh changed plan IDs</p>
+            <p class="fix">Regex supports both old and new IDs</p>
+        </div>
+        <div class="proof r">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2235 · May 12</div>
+            <h4>BOB dropdown detached element</h4>
+            <p class="cause">Element detached from DOM before click</p>
+            <p class="fix">scrollIntoView pattern from prod utils-cypress</p>
+        </div>
+        <div class="proof r rd1">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2227 · May 8</div>
+            <h4>RBAC dropdown timing</h4>
+            <p class="cause">Dropdown closing during page re-renders</p>
+            <p class="fix">Stability checks + visibility waits · 30x verified</p>
+        </div>
+        <div class="proof r rd2">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2209 · Apr 24</div>
+            <h4>Flaky date filter</h4>
+            <p class="cause">Brittle .parent().next() DOM traversal</p>
+            <p class="fix">Direct calendar selector · 75% → 0% failure</p>
+        </div>
+        <div class="proof r">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2213 · Apr 29</div>
+            <h4>Listing-page FAQ assertion</h4>
+            <p class="cause">Contentful added UTM params post-rollout</p>
+            <p class="fix">Documented experiment timeline · 60x verified</p>
+        </div>
+        <div class="proof r rd1">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2166 · Apr 3</div>
+            <h4>WSJ press story URL mismatch</h4>
+            <p class="cause">frontend-monorepo#18543 switched to Contentful</p>
+            <p class="fix">Full timeline: who, what, when, why</p>
+        </div>
+        <div class="proof r rd2">
+            <div class="tag tag-inv">/investigate</div>
+            <div class="pr-num">#2165 · Apr 3</div>
+            <h4>External dependency failure</h4>
+            <p class="cause">Third-party site added Cloudflare → 403</p>
+            <p class="fix">Switched to Zocdoc-controlled test page</p>
+        </div>
+
+        <!-- Create PRs -->
+        <div class="proof r">
+            <div class="tag tag-cre">/create</div>
+            <div class="pr-num">#2244 · May 14</div>
+            <h4>Billing user flow — V2 UI</h4>
+            <p class="cause">Full rewrite: V2 billing migration</p>
+            <p class="fix">3-dot menu, radio buttons, ACH + card flows</p>
+        </div>
+        <div class="proof r rd1">
+            <div class="tag tag-cre">/create</div>
+            <div class="pr-num">#2215 · May 3</div>
+            <h4>BOB booking flow E2E</h4>
+            <p class="cause">New: BOB JS migration end-to-end</p>
+            <p class="fix">14 assertions, 3 intercepts, cleanup · 15x verified</p>
+        </div>
+        <div class="proof r rd2">
+            <div class="tag tag-cre">/create</div>
+            <div class="pr-num">#2216 · May 4</div>
+            <h4>BOB mobile booking flow</h4>
+            <p class="cause">Mobile viewport: iPhone X, Samsung S10</p>
+            <p class="fix">Booking + cleanup in single transactions</p>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================== EVOLUTION ====================== -->
+<section class="sec sec-sm" id="evolution">
+    <div class="eyebrow ey-sh r">Evolution</div>
+    <h2 class="r">Refined through daily use</h2>
+    <p class="desc r">Every mistake and edge case made the skills smarter. Here's how they evolved.</p>
+
+    <div class="evo-track">
+        <div class="evo-item r">
+            <div class="evo-num ni">01</div>
+            <div class="evo-content">
+                <h4>Research before code</h4>
+                <p>Early iterations guessed at selectors. Now: search prod repos for <code>data-test</code>, check local sandbox first — local tests reveal runtime patterns source code doesn't show.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num ni">02</div>
+            <div class="evo-content">
+                <h4>Never skip steps</h4>
+                <p>Shortcutting to "just fix it" caused repeat iterations. Now the full pipeline is enforced: fetch → analyze → research → fix → verify. Step 3 often reveals patterns that change the fix.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num ni">03</div>
+            <div class="evo-content">
+                <h4>Stress testing is non-negotiable</h4>
+                <p>A fix that passes once means nothing. Every PR gets 20–60x loops in CI. The skill polls TeamCity until all iterations pass, then removes the loop automatically.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num ni">04</div>
+            <div class="evo-content">
+                <h4>Trace to the causing PR</h4>
+                <p>PR #2166 taught the skill to build full timelines — who changed what, when, and why. Not "something changed." Makes root cause undeniable.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num ni">05</div>
+            <div class="evo-content">
+                <h4>"What we did NOT do"</h4>
+                <p>PRs now document deliberate non-choices. No <code>force:true</code>, no <code>cy.wait(ms)</code>. Future maintainers understand the reasoning, not just the code.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num nc">06</div>
+            <div class="evo-content">
+                <h4>Local sandbox first</h4>
+                <p>Creating tests now checks existing sandbox specs before source repos. Local tests reveal iframes, specific URLs, auth patterns, and runtime quirks.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num nc">07</div>
+            <div class="evo-content">
+                <h4>Comprehensive assertion checklist</h4>
+                <p>Not just "element visible." Text content, tooltips, modals, navigation state, tracking params. The checklist grew from real missed bugs in production.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num nc">08</div>
+            <div class="evo-content">
+                <h4>CodeRabbit integration</h4>
+                <p>Skills poll for review comments, triage by severity, apply direct fixes with commit hashes, and reply with reasoning. The full PR lifecycle is automated.</p>
+            </div>
+        </div>
+        <div class="evo-item r">
+            <div class="evo-num ni">09</div>
+            <div class="evo-content">
+                <h4>Pattern library compounds</h4>
+                <p>Each investigation adds to <code>cypress-core/patterns/</code>. Started with timing and selectors — now includes auth context, external dependencies, deterministic selection, text matching, migration patterns.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================== FUTURE ====================== -->
+<section class="sec" id="future">
+    <div class="eyebrow ey-gr r">What's next</div>
+    <h2 class="r">The skills keep learning</h2>
+    <p class="desc r">Every edge case makes them smarter. Here's what's shipped and what's ahead.</p>
+
+    <div class="future-row">
+        <div class="fc r">
+            <h4><span class="pill pill-done">SHIPPED</span> CI adaptive polling</h4>
+            <p>120s initial wait, then 270s intervals. Distinguishes CI progress % from actual run status — no false completions.</p>
+        </div>
+        <div class="fc r rd1">
+            <h4><span class="pill pill-done">SHIPPED</span> CodeRabbit triage</h4>
+            <p>Classifies comments P0–P3. Direct fixes for simple issues, agent dispatch for complex multi-file changes. Replies with commit hashes.</p>
+        </div>
+        <div class="fc r rd2">
+            <h4><span class="pill pill-done">SHIPPED</span> Pattern analysis</h4>
+            <p><code>analyze-patterns.py</code> and <code>find-causing-pr.py</code> — automated bad pattern detection and production PR tracing.</p>
+        </div>
+        <div class="fc r">
+            <h4><span class="pill pill-next">NEXT</span> Cypress Cloud auth</h4>
+            <p>MCP server auth setup will unlock flaky test history lookup, run analytics, and cross-correlation with TeamCity failures.</p>
+        </div>
+        <div class="fc r rd1">
+            <h4><span class="pill pill-next">NEXT</span> Selector database</h4>
+            <p>Pre-indexed <code>data-test</code> attributes across all prod repos. Cuts research time from minutes to instant lookup.</p>
+        </div>
+        <div class="fc r rd2">
+            <h4><span class="pill pill-later">LATER</span> Confidence auto-proceed</h4>
+            <p>For simple cases (text changes, selector updates), auto-proceed without step-by-step approval. Trust calibrated by pattern match confidence.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-pills">
+        <span>🔍 /cypress-investigate</span>
+        <span>🧪 /cypress-create</span>
+    </div>
+    <p>Built with <strong>Claude Code Skills</strong> · Zocdoc QA Engineering · Allen Koickal</p>
+</footer>
+
+<script>
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30));
+
+// Reveal on scroll
+const ro=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')})
+},{threshold:.06,rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.r').forEach(el=>ro.observe(el));
+
+// Terminal tabs
+document.querySelectorAll('.tt').forEach(t=>{
+    t.addEventListener('click',()=>{
+        const p=t.closest('.term');
+        p.querySelectorAll('.tt').forEach(x=>x.classList.remove('a'));
+        p.querySelectorAll('.ts').forEach(x=>x.classList.remove('a'));
+        t.classList.add('a');
+        p.querySelector('#s-'+t.dataset.s).classList.add('a');
+    });
+});
+
+// Animated counters
+const counted=new Set();
+const co=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+        if(!e.isIntersecting||counted.has(e.target))return;
+        counted.add(e.target);
+        const end=+e.target.dataset.count;
+        if(end===0){e.target.textContent='0';return}
+        const dur=1200,start=performance.now();
+        const suffix=e.target.closest('.hero-metric')?.querySelector('.lbl')?.textContent||'';
+        const pre=suffix.includes('minute')?'~':'';
+        const suf=suffix.includes('Stress')?'x':suffix.includes('PR')?'+':'m';
+        (function tick(now){
+            const p=Math.min((now-start)/dur,1);
+            const ease=1-Math.pow(1-p,3);
+            e.target.textContent=pre+Math.round(end*ease)+(p<1?'':suf);
+            if(p<1)requestAnimationFrame(tick);
+        })(start);
+    });
+},{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>co.observe(el));
+
+// ========== SIMULATOR ==========
+(function(){
+const lines=[
+// Phase 0 — Ticket
+{phase:0, html:'<span class="sd">─── Jira ticket PTR-4743 received ───</span>'},
+{phase:0, html:'<span class="sb">Summary:</span> <span class="sf">Practice settings providers page — flaky test</span>'},
+{phase:0, html:'<span class="sb">Spec:</span> <span class="si">practice-settings-user-flow.spec.js</span>'},
+{phase:0, html:'<span class="sd">Priority: P1 — affecting CI reliability</span>'},
+{phase:0, html:''},
+{phase:0, html:'<span class="sp">&gt; /cypress-investigate practice-settings-user-flow.spec.js</span>', typing:true},
+{phase:0, html:''},
+
+// Phase 1 — Fetch CI
+{phase:1, html:'<span class="sw">Fetching from TeamCity...</span>'},
+{phase:1, html:'<span class="sd">Build: ProdTests_CypressTestsSandbox_AllCypressTests</span>'},
+{phase:1, html:'<span class="sd">Scanning last 10 builds...</span>', delay:600},
+{phase:1, html:''},
+{phase:1, html:'<span class="se">Found 3 failures in 10 runs (30% failure rate)</span>'},
+{phase:1, html:'<span class="sb">Cluster 1:</span> practice-settings-providers-page.spec.js'},
+{phase:1, html:'  Error: <span class="se">CypressError: Timed out retrying after 4000ms</span>'},
+{phase:1, html:'  <span class="sd">expected</span> <span class="sf">[data-test="role-filter-checkbox"]</span> <span class="sd">to be visible</span>'},
+{phase:1, html:'  Onset: <span class="sw">Apr 14, 2026</span>'},
+{phase:1, html:'  Rate:  <span class="se">intermittent</span> <span class="sd">→ likely timing issue</span>'},
+{phase:1, html:''},
+
+// Phase 2 — Analyze
+{phase:2, html:'<span class="si">Running analyze-patterns.py on spec...</span>'},
+{phase:2, html:'', delay:400},
+{phase:2, html:'<span class="sw">⚠ TIMING-003:</span> <span class="sf">Click without preceding visibility assertion</span>'},
+{phase:2, html:'<span class="sw">⚠ NETWORK-007:</span> <span class="sf">cy.visit() without preceding cy.intercept()</span>'},
+{phase:2, html:'<span class="so">✓ SELECTOR:</span> <span class="sd">No issues found</span>'},
+{phase:2, html:''},
+{phase:2, html:'<span class="si">Running find-causing-pr.py...</span>'},
+{phase:2, html:'<span class="sd">Searching provider-fe-monorepo for selector...</span>', delay:500},
+{phase:2, html:'<span class="so">✓ Found:</span> <span class="sf">data-test="role-filter-checkbox" in RoleFilter.tsx:47</span>'},
+{phase:2, html:'<span class="sd">git blame RoleFilter.tsx...</span>'},
+{phase:2, html:'<span class="so">✓ PR spo-webapp#892</span> <span class="sd">(Apr 12) by @frontend-dev</span>'},
+{phase:2, html:'  <span class="sf">Changed: Added async data fetch before dropdown render</span>'},
+{phase:2, html:'  <span class="so">Timeline matches failure onset (Apr 14) ✓</span>'},
+{phase:2, html:''},
+
+// Phase 3 — Root Cause
+{phase:3, html:'<span class="se">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>'},
+{phase:3, html:'<span class="sb">ROOT CAUSE: Bad Pattern (TIMING + NETWORK)</span>'},
+{phase:3, html:'<span class="se">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>'},
+{phase:3, html:''},
+{phase:3, html:'<span class="sf">The Role filter checkbox click races against the</span>'},
+{phase:3, html:'<span class="sf">dropdown\'s rendering. The</span> <span class="si">providers:batchGet</span> <span class="sf">API</span>'},
+{phase:3, html:'<span class="sf">response triggers a re-render, detaching the</span>'},
+{phase:3, html:'<span class="sf">checkbox element from the DOM mid-click.</span>'},
+{phase:3, html:''},
+{phase:3, html:'<span class="sb">Evidence chain:</span>'},
+{phase:3, html:'  <span class="sf">RoleFilter.tsx:47</span> <span class="sd">→ dropdown renders after API response</span>'},
+{phase:3, html:'  <span class="sf">ProvidersPage.tsx:112</span> <span class="sd">→ full re-render on data load</span>'},
+{phase:3, html:'  <span class="sw">spo-webapp#892</span> <span class="sd">→ introduced async fetch (Apr 12)</span>'},
+{phase:3, html:'  <span class="se">Failure onset: Apr 14</span> <span class="sd">→ matches deploy date</span>'},
+{phase:3, html:''},
+
+// Phase 4 — Fix
+{phase:4, html:'<span class="si">Applying fix...</span>'},
+{phase:4, html:''},
+{phase:4, html:'<span class="so">+ cy.intercept("**/providers:batchGet").as("batch")</span>'},
+{phase:4, html:'<span class="sd">  // Wait for API before interacting with UI</span>'},
+{phase:4, html:'<span class="so">+ cy.wait("@batch")</span>'},
+{phase:4, html:'<span class="sd">  // Ensure element is rendered and visible</span>'},
+{phase:4, html:'<span class="so">+ cy.get(\'[data-test="role-filter"]\').should("be.visible")</span>'},
+{phase:4, html:''},
+{phase:4, html:'<span class="sb">What we are NOT doing:</span>'},
+{phase:4, html:'  <span class="se">✕ { force: true }</span> <span class="sd">— would mask real UI bugs</span>'},
+{phase:4, html:'  <span class="se">✕ cy.wait(2000)</span>   <span class="sd">— brittle hardcoded delay</span>'},
+{phase:4, html:'  <span class="so">✓ Visibility assertion</span> <span class="sd">— real bugs will still surface</span>'},
+{phase:4, html:''},
+{phase:4, html:'<span class="sd">Committing fix...</span>'},
+{phase:4, html:'<span class="so">✓ Committed:</span> <span class="sf">"fix: intercept + visibility for role filter"</span>'},
+{phase:4, html:''},
+
+// Phase 5 — Stress Test
+{phase:5, html:'<span class="sw">Adding stress test loop...</span>'},
+{phase:5, html:'<span class="sd">Wrapping describe in Cypress._.times(30, (i) => { ... })</span>'},
+{phase:5, html:'<span class="sd">Commit: "Add 30x stress test loop"</span>'},
+{phase:5, html:'<span class="sd">Pushing to CI...</span>'},
+{phase:5, html:''},
+{phase:5, html:'<span class="sd">Polling TeamCity build #48291...</span>'},
+{phase:5, html:'  <span class="sd">120s...</span> <span class="sw">queued</span>', delay:700},
+{phase:5, html:'  <span class="sd">270s...</span> <span class="si">running — 10/30 passed</span>', delay:600},
+{phase:5, html:'  <span class="sd">270s...</span> <span class="si">running — 20/30 passed</span>', delay:500},
+{phase:5, html:'  <span class="sd">270s...</span> <span class="so">30/30 passed!</span>', delay:400},
+{phase:5, html:''},
+{phase:5, html:'<span class="so">✅ All 30 iterations passed — zero flakes</span>'},
+{phase:5, html:''},
+{phase:5, html:'<span class="sd">Removing stress loop...</span>'},
+{phase:5, html:'<span class="so">✓ Committed:</span> <span class="sf">"Remove stress test loop — 30/30 passed"</span>'},
+{phase:5, html:''},
+
+// Phase 6 — Ship PR
+{phase:6, html:'<span class="si">Creating PR...</span>'},
+{phase:6, html:''},
+{phase:6, html:'<span class="so">✅ PR #2186 created</span>'},
+{phase:6, html:'  <span class="sf">Title: fix(cypress): stabilize practice settings providers page</span>'},
+{phase:6, html:''},
+{phase:6, html:'<span class="sb">PR includes:</span>'},
+{phase:6, html:'  <span class="sf">• Root cause analysis with evidence chain</span>'},
+{phase:6, html:'  <span class="sf">• Fix with pattern references (TIMING + NETWORK)</span>'},
+{phase:6, html:'  <span class="sf">• "What we did NOT do" section</span>'},
+{phase:6, html:'  <span class="sf">• Stress test results: 30/30 passed</span>'},
+{phase:6, html:''},
+{phase:6, html:'<span class="sd">Checking for CodeRabbit comments...</span>'},
+{phase:6, html:'  <span class="sw">1 comment:</span> <span class="sf">"Add data-test anchor after cy.visit"</span>'},
+{phase:6, html:'  <span class="si">→ Applied fix (commit abc1234), replied with hash</span>'},
+{phase:6, html:''},
+{phase:6, html:'<span class="so">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>'},
+{phase:6, html:'<span class="so">✅ DONE — PR #2186 ready for review</span>'},
+{phase:6, html:'<span class="so">   Root cause: TIMING + NETWORK pattern</span>'},
+{phase:6, html:'<span class="so">   Stress test: 30/30 passed</span>'},
+{phase:6, html:'<span class="so">   Reviews: addressed</span>'},
+{phase:6, html:'<span class="so">   Total time: ~12 minutes</span>'},
+{phase:6, html:'<span class="so">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>'},
+];
+
+const out=document.getElementById('sim-output');
+const playBtn=document.getElementById('sim-play');
+const restartBtn=document.getElementById('sim-restart');
+const progressBar=document.getElementById('sim-progress');
+const statusEl=document.getElementById('sim-status');
+const steps=document.querySelectorAll('.sim-step');
+const conns=document.querySelectorAll('.sim-connector');
+
+let playing=false, lineIdx=0, timeout=null, started=false;
+
+function setPhase(p){
+    steps.forEach((s,i)=>{
+        const sp=+s.dataset.phase;
+        s.classList.toggle('active',sp===p);
+        s.classList.toggle('done',sp<p);
+    });
+    conns.forEach((c,i)=>{
+        c.classList.toggle('filled',+c.dataset.conn<p);
+    });
+}
+
+function addLine(html){
+    const div=document.createElement('div');
+    div.className='line';
+    div.innerHTML=html||'&nbsp;';
+    out.appendChild(div);
+    requestAnimationFrame(()=>{
+        div.classList.add('show');
+        out.scrollTop=out.scrollHeight;
+    });
+}
+
+function updateProgress(){
+    const pct=Math.round((lineIdx/lines.length)*100);
+    progressBar.style.width=pct+'%';
+}
+
+function playNext(){
+    if(!playing||lineIdx>=lines.length){
+        if(lineIdx>=lines.length){
+            playing=false;
+            playBtn.textContent='↺';
+            statusEl.textContent='Complete';
+            setPhase(7);
+        }
+        return;
+    }
+    const l=lines[lineIdx];
+    setPhase(l.phase);
+    const phaseNames=['Receiving ticket','Fetching CI failures','Analyzing patterns','Identifying root cause','Applying fix','Stress testing','Shipping PR'];
+    statusEl.textContent=phaseNames[l.phase]||'';
+    addLine(l.html);
+    lineIdx++;
+    updateProgress();
+    const delay=l.delay||120;
+    timeout=setTimeout(playNext,delay);
+}
+
+function togglePlay(){
+    if(lineIdx>=lines.length){
+        reset();
+        return;
+    }
+    playing=!playing;
+    playBtn.textContent=playing?'❚❚':'▶';
+    if(playing){
+        if(!started){started=true}
+        playNext();
+    }else{
+        clearTimeout(timeout);
+        statusEl.textContent='Paused';
+    }
+}
+
+function reset(){
+    clearTimeout(timeout);
+    playing=false;started=false;lineIdx=0;
+    out.innerHTML='';
+    playBtn.textContent='▶';
+    progressBar.style.width='0%';
+    statusEl.textContent='Ready to play';
+    setPhase(0);
+    steps.forEach(s=>s.classList.remove('done','active'));
+    conns.forEach(c=>c.classList.remove('filled'));
+    steps[0].classList.add('active');
+}
+
+playBtn.addEventListener('click',togglePlay);
+restartBtn.addEventListener('click',()=>{reset()});
+
+// Auto-play when scrolled into view
+const simObs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+        if(e.isIntersecting&&!started){
+            setTimeout(()=>{if(!started)togglePlay()},800);
+        }
+    });
+},{threshold:.3});
+simObs.observe(document.getElementById('simulator'));
+})();
+</script>
+
+</body>
+</html>
