@@ -1274,47 +1274,59 @@ cy.get('[data-test="role-filter"]')
         <div class="future-row" style="margin-bottom:3rem">
             <div class="fc">
                 <h4><span class="pill pill-done">SHIPPED</span> CI adaptive polling</h4>
-                <p>120s initial wait, then 270s intervals. Distinguishes CI progress % from actual run status — no false completions.</p>
+                <p>120s initial wait, then 270s intervals tuned to prompt cache TTL. Distinguishes CI progress % from actual run status — no false completions.</p>
             </div>
             <div class="fc">
                 <h4><span class="pill pill-done">SHIPPED</span> CodeRabbit triage</h4>
-                <p>Classifies comments P0–P3. Direct fixes for simple issues, agent dispatch for complex multi-file changes. Replies with commit hashes.</p>
+                <p>Classifies comments P0–P3. Tiered fixes: direct edits for single-file changes, subagent dispatch for multi-file. Replies with commit hashes, plans for 2 review cycles.</p>
             </div>
             <div class="fc">
-                <h4><span class="pill pill-done">SHIPPED</span> Pattern analysis</h4>
-                <p><code>analyze-patterns.py</code> and <code>find-causing-pr.py</code> — automated bad pattern detection and production PR tracing.</p>
+                <h4><span class="pill pill-done">SHIPPED</span> Pattern analysis scripts</h4>
+                <p><code>analyze-patterns.py</code> (15 regex detectors) and <code>find-causing-pr.py</code> (weighted signal scoring + temporal proximity) — automated static analysis and production PR tracing.</p>
+            </div>
+            <div class="fc">
+                <h4><span class="pill pill-done">SHIPPED</span> Cypress Cloud integration</h4>
+                <p>MCP-based flaky test history lookup (<code>cypress_get_flaky_tests</code>), run analytics (<code>cypress_get_runs</code>), and deduplication gate — checks existing coverage before creating new tests. Cross-correlates with TeamCity failures.</p>
+            </div>
+            <div class="fc">
+                <h4><span class="pill pill-done">SHIPPED</span> Continuous investigation mode</h4>
+                <p>4-hour cron job appends findings to daily files. <code>--recent</code> flag surfaces accumulated results without re-running the pipeline. Passive health monitoring without interactive sessions.</p>
+            </div>
+            <div class="fc">
+                <h4><span class="pill pill-done">SHIPPED</span> Figma-to-assertion pipeline</h4>
+                <p>When a Figma URL is provided, <code>get_design_context</code> MCP extracts all text content, component states, and modal copy. Tests validate every string from the design spec, not just element visibility.</p>
             </div>
         </div>
 
         <h3 style="font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--cre);margin-bottom:1rem">Next up</h3>
         <div class="future-row" style="margin-bottom:3rem">
             <div class="fc">
-                <h4><span class="pill pill-next">NEXT</span> Cypress Cloud auth</h4>
-                <p>MCP server auth setup will unlock flaky test history lookup, run analytics, and cross-correlation with TeamCity failures.</p>
+                <h4><span class="pill pill-next">NEXT</span> Playwright migration skill</h4>
+                <p>A <code>/cypress-to-playwright</code> skill already exists — migrates one Team slice per PR, maps 71 custom commands, converts 114 <code>cy.contains</code> calls, and handles <code>testAbSystemOverrides</code> cookie porting. Running side-by-side with Cypress until per-BU cutover.</p>
             </div>
             <div class="fc">
-                <h4><span class="pill pill-next">NEXT</span> Selector database</h4>
-                <p>Pre-indexed <code>data-test</code> attributes across all prod repos. Cuts research time from minutes to instant lookup.</p>
+                <h4><span class="pill pill-next">NEXT</span> Playwright-native create &amp; investigate</h4>
+                <p>Port the <code>/create</code> and <code>/investigate</code> skills to emit Playwright tests natively — <code>page.locator</code>, <code>page.route</code>, <code>expect</code> assertions. Same research-first workflow, same stress testing, same CodeRabbit loop, different test runner. Pattern library gets a Playwright column.</p>
             </div>
             <div class="fc">
-                <h4><span class="pill pill-next">NEXT</span> Cross-team patterns</h4>
-                <p>Export pattern library and skill templates for other QA engineers. Same investigation rigor, different test domains.</p>
+                <h4><span class="pill pill-next">NEXT</span> Cross-team skill export</h4>
+                <p>Package pattern library, investigation templates, and skill scaffolding for other QA engineers to adopt. Same rigor — cluster → triage → root cause → stress test — applied to their test domains with team-specific selector mappings and repo configs.</p>
             </div>
         </div>
 
         <h3 style="font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--inv);margin-bottom:1rem">On the horizon</h3>
         <div class="future-row">
             <div class="fc">
-                <h4><span class="pill pill-later">LATER</span> Confidence auto-proceed</h4>
-                <p>For simple cases (text changes, selector updates), auto-proceed without step-by-step approval. Trust calibrated by pattern match confidence.</p>
+                <h4><span class="pill pill-later">LATER</span> Pre-merge impact analysis</h4>
+                <p>When a prod PR touches a component, automatically identify which E2E specs depend on its <code>data-test</code> attributes. Run those specs against the PR branch before merge — catch breakage before it hits nightly CI, not after.</p>
             </div>
             <div class="fc">
-                <h4><span class="pill pill-later">LATER</span> Proactive flake detection</h4>
-                <p>Monitor CI trends and flag emerging flakes before they become P1s. Shift from reactive to preventive.</p>
+                <h4><span class="pill pill-later">LATER</span> Proactive flake trending</h4>
+                <p>Monitor CI failure rates over time and flag specs crossing a threshold (e.g., 10% → 20% in a week). Auto-open an investigation before the flake becomes a P1. Shift from "it broke last night" to "it's been degrading since Tuesday."</p>
             </div>
             <div class="fc">
-                <h4><span class="pill pill-later">LATER</span> Test gap analysis</h4>
-                <p>Compare prod feature coverage against existing specs. Identify what's untested and prioritize new test creation by risk.</p>
+                <h4><span class="pill pill-later">LATER</span> Test coverage heatmap</h4>
+                <p>Map prod features against existing specs to visualize coverage gaps. Prioritize new test creation by blast radius — high-traffic flows with no E2E coverage get flagged first. Drives <code>/create</code> backlog instead of waiting for tickets.</p>
             </div>
         </div>
 
@@ -1326,20 +1338,27 @@ cy.get('[data-test="role-filter"]')
                     <span class="term-title">The vision</span>
                 </div>
                 <div class="term-body" style="min-height:auto">
-<span class="d"># Current: reactive — ticket comes in, skill runs</span>
+<span class="d"># Today: reactive — ticket comes in, skill runs</span>
 <span class="p">&gt;</span> /cypress-investigate PTR-4743
-<span class="ok">✓ Fixed in 12 minutes</span>
+<span class="ok">✓ Root cause: prod change in provider-fe-monorepo#19201</span>
+<span class="ok">✓ Fixed, stress-tested 15x, PR merged in 12 minutes</span>
+
+<span class="d"># Now: migrating — same skills, new test runner</span>
+<span class="p">&gt;</span> /cypress-to-playwright BU/Infrastructure/Auth/Flows
+<span class="i">Analyzing 4 specs, 71 commands, 23 intercepts...</span>
+<span class="ok">✓ Migrated to playwright/e2e/BU/Infrastructure/Auth/Flows/</span>
+<span class="ok">✓ Cypress and Playwright running side-by-side</span>
 
 <span class="d"># Next: proactive — skill catches it before you do</span>
-<span class="w">⚠ CI trend alert: booking-flow.spec.js failure rate 15% → 25%</span>
+<span class="w">⚠ CI trend: booking-flow failure rate 15% → 25% over 5 days</span>
 <span class="i">Auto-investigating...</span>
 <span class="ok">✓ Root cause identified. Draft PR ready for review.</span>
 
 <span class="d"># Later: predictive — skill prevents flakes before deploy</span>
 <span class="i">PR #19234 touches BookingButton.tsx</span>
-<span class="w">⚠ 3 Cypress specs depend on [data-test="booking-cta"]</span>
-<span class="i">Running pre-merge validation...</span>
-<span class="ok">✓ All 3 specs pass against PR branch. Safe to merge.</span>
+<span class="w">⚠ 3 E2E specs depend on [data-test="booking-cta"]</span>
+<span class="i">Running pre-merge validation against PR branch...</span>
+<span class="ok">✓ All 3 specs pass. Safe to merge.</span>
                 </div>
             </div>
         </div>
