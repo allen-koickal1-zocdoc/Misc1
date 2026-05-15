@@ -238,6 +238,17 @@
             box-shadow:0 0 20px rgba(245,158,11,.25);transform:scale(1.12);
         }
         .sim-step.active .sim-dot::after{border-color:rgba(245,158,11,.3);animation:ring-pulse 1.5s ease-in-out infinite}
+        /* Blue variant for /create simulator */
+        .sim-blue .sim-step.active .sim-dot{
+            border-color:var(--cre);background:var(--cre-g);
+            box-shadow:0 0 20px rgba(56,189,248,.25);
+        }
+        .sim-blue .sim-step.active .sim-dot::after{border-color:rgba(56,189,248,.3)}
+        .sim-blue .sim-step.active .sim-step-label{color:var(--cre)}
+        .sim-blue .sim-body .sp{color:var(--cre)}
+        .sim-blue .sim-btn.primary{background:linear-gradient(135deg,var(--cre),var(--purple))}
+        .sim-blue .sim-btn.primary:hover{box-shadow:0 0 30px rgba(56,189,248,.25)}
+        .sim-blue .sim-progress-fill{background:linear-gradient(90deg,var(--cre),var(--purple))}
         @keyframes ring-pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.3);opacity:0}}
         .sim-step.done .sim-dot{
             border-color:var(--green);background:var(--green-g);
@@ -657,39 +668,92 @@
             </div>
         </div>
 
-        <!-- Live Simulator -->
+        <!-- Live Simulators -->
         <div style="margin-top:3rem">
-            <h3 style="font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--inv);text-align:center;margin-bottom:.5rem">Live Demo — /cypress-investigate on PR #2186</h3>
-            <p style="text-align:center;color:var(--text3);font-size:.85rem;margin-bottom:2rem">Watch the full pipeline run: Jira ticket to merged PR in ~12 minutes</p>
+            <h3 style="font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);text-align:center;margin-bottom:1.25rem">Live Demo — Watch a skill run end-to-end</h3>
 
-            <div class="sim-pipeline">
-                <div class="sim-step active" data-phase="0"><div class="sim-dot">🎫</div><div class="sim-step-label">Ticket</div></div>
-                <div class="sim-connector" data-conn="0"></div>
-                <div class="sim-step" data-phase="1"><div class="sim-dot">📡</div><div class="sim-step-label">Fetch CI</div></div>
-                <div class="sim-connector" data-conn="1"></div>
-                <div class="sim-step" data-phase="2"><div class="sim-dot">🔬</div><div class="sim-step-label">Analyze</div></div>
-                <div class="sim-connector" data-conn="2"></div>
-                <div class="sim-step" data-phase="3"><div class="sim-dot">🎯</div><div class="sim-step-label">Root Cause</div></div>
-                <div class="sim-connector" data-conn="3"></div>
-                <div class="sim-step" data-phase="4"><div class="sim-dot">🔧</div><div class="sim-step-label">Fix</div></div>
-                <div class="sim-connector" data-conn="4"></div>
-                <div class="sim-step" data-phase="5"><div class="sim-dot">🔁</div><div class="sim-step-label">Stress Test</div></div>
-                <div class="sim-connector" data-conn="5"></div>
-                <div class="sim-step" data-phase="6"><div class="sim-dot">🚀</div><div class="sim-step-label">Ship PR</div></div>
+            <!-- Simulator toggle -->
+            <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:2rem">
+                <button class="sim-toggle active" id="toggle-inv" style="
+                    padding:.5rem 1.25rem;border-radius:var(--rp);font-size:.78rem;font-weight:600;
+                    font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;
+                    border:1px solid var(--inv);background:var(--inv-g);color:var(--inv);
+                ">🔍 /cypress-investigate</button>
+                <button class="sim-toggle" id="toggle-cre" style="
+                    padding:.5rem 1.25rem;border-radius:var(--rp);font-size:.78rem;font-weight:600;
+                    font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;
+                    border:1px solid var(--border);background:transparent;color:var(--text3);
+                ">🧪 /cypress-create</button>
             </div>
 
-            <div class="sim-term">
-                <div class="sim-bar">
-                    <div class="dots"><div class="td red"></div><div class="td yel"></div><div class="td grn"></div></div>
-                    <div class="title">Claude Code — /cypress-investigate</div>
+            <!-- INVESTIGATE SIMULATOR -->
+            <div id="sim-inv" class="sim-instance">
+                <p style="text-align:center;color:var(--text3);font-size:.82rem;margin-bottom:1.5rem">PR #2186 — Flaky practice settings providers page → root cause → fix → 30x stress test</p>
+
+                <div class="sim-pipeline">
+                    <div class="sim-step active" data-phase="0"><div class="sim-dot">🎫</div><div class="sim-step-label">Ticket</div></div>
+                    <div class="sim-connector" data-conn="0"></div>
+                    <div class="sim-step" data-phase="1"><div class="sim-dot">📡</div><div class="sim-step-label">Fetch CI</div></div>
+                    <div class="sim-connector" data-conn="1"></div>
+                    <div class="sim-step" data-phase="2"><div class="sim-dot">🔬</div><div class="sim-step-label">Analyze</div></div>
+                    <div class="sim-connector" data-conn="2"></div>
+                    <div class="sim-step" data-phase="3"><div class="sim-dot">🎯</div><div class="sim-step-label">Root Cause</div></div>
+                    <div class="sim-connector" data-conn="3"></div>
+                    <div class="sim-step" data-phase="4"><div class="sim-dot">🔧</div><div class="sim-step-label">Fix</div></div>
+                    <div class="sim-connector" data-conn="4"></div>
+                    <div class="sim-step" data-phase="5"><div class="sim-dot">🔁</div><div class="sim-step-label">Stress Test</div></div>
+                    <div class="sim-connector" data-conn="5"></div>
+                    <div class="sim-step" data-phase="6"><div class="sim-dot">🚀</div><div class="sim-step-label">Ship PR</div></div>
                 </div>
-                <div class="sim-body" id="sim-output"></div>
+
+                <div class="sim-term">
+                    <div class="sim-bar">
+                        <div class="dots"><div class="td red"></div><div class="td yel"></div><div class="td grn"></div></div>
+                        <div class="title">Claude Code — /cypress-investigate</div>
+                    </div>
+                    <div class="sim-body" id="sim-output"></div>
+                </div>
+                <div class="sim-controls">
+                    <button class="sim-btn" id="sim-restart" title="Restart">↺</button>
+                    <button class="sim-btn primary" id="sim-play" title="Play / Pause">▶</button>
+                    <div class="sim-progress"><div class="sim-progress-fill" id="sim-progress"></div></div>
+                    <div class="sim-status" id="sim-status">Ready to play</div>
+                </div>
             </div>
-            <div class="sim-controls">
-                <button class="sim-btn" id="sim-restart" title="Restart">↺</button>
-                <button class="sim-btn primary" id="sim-play" title="Play / Pause">▶</button>
-                <div class="sim-progress"><div class="sim-progress-fill" id="sim-progress"></div></div>
-                <div class="sim-status" id="sim-status">Ready to play</div>
+
+            <!-- CREATE SIMULATOR -->
+            <div id="sim-cre" class="sim-instance sim-blue" style="display:none">
+                <p style="text-align:center;color:var(--text3);font-size:.82rem;margin-bottom:1.5rem">PR #2215 — Jira ticket PTR-4764 → research → generate BOB booking flow test → 15x stress test</p>
+
+                <div class="sim-pipeline">
+                    <div class="sim-step active" data-phase="0"><div class="sim-dot">📋</div><div class="sim-step-label">Parse Input</div></div>
+                    <div class="sim-connector" data-conn="0"></div>
+                    <div class="sim-step" data-phase="1"><div class="sim-dot">🔎</div><div class="sim-step-label">Research</div></div>
+                    <div class="sim-connector" data-conn="1"></div>
+                    <div class="sim-step" data-phase="2"><div class="sim-dot">📁</div><div class="sim-step-label">Classify</div></div>
+                    <div class="sim-connector" data-conn="2"></div>
+                    <div class="sim-step" data-phase="3"><div class="sim-dot">⚡</div><div class="sim-step-label">Generate</div></div>
+                    <div class="sim-connector" data-conn="3"></div>
+                    <div class="sim-step" data-phase="4"><div class="sim-dot">🔁</div><div class="sim-step-label">Stress Test</div></div>
+                    <div class="sim-connector" data-conn="4"></div>
+                    <div class="sim-step" data-phase="5"><div class="sim-dot">🤖</div><div class="sim-step-label">Review</div></div>
+                    <div class="sim-connector" data-conn="5"></div>
+                    <div class="sim-step" data-phase="6"><div class="sim-dot">🚀</div><div class="sim-step-label">Ship PR</div></div>
+                </div>
+
+                <div class="sim-term">
+                    <div class="sim-bar">
+                        <div class="dots"><div class="td red"></div><div class="td yel"></div><div class="td grn"></div></div>
+                        <div class="title">Claude Code — /cypress-create</div>
+                    </div>
+                    <div class="sim-body" id="sim-cre-output"></div>
+                </div>
+                <div class="sim-controls">
+                    <button class="sim-btn" id="sim-cre-restart" title="Restart">↺</button>
+                    <button class="sim-btn primary" id="sim-cre-play" title="Play / Pause">▶</button>
+                    <div class="sim-progress"><div class="sim-progress-fill" id="sim-cre-progress"></div></div>
+                    <div class="sim-status" id="sim-cre-status">Ready to play</div>
+                </div>
             </div>
         </div>
     </div>
@@ -1091,16 +1155,105 @@ document.querySelectorAll('.tt').forEach(t => {
     });
 });
 
-// ========== SIMULATOR ==========
-(function () {
-const lines = [
+// ========== SIMULATOR TOGGLE ==========
+const toggleInv = document.getElementById('toggle-inv');
+const toggleCre = document.getElementById('toggle-cre');
+const simInv = document.getElementById('sim-inv');
+const simCre = document.getElementById('sim-cre');
+
+toggleInv.addEventListener('click', () => {
+    simInv.style.display = 'block'; simCre.style.display = 'none';
+    toggleInv.style.borderColor = 'var(--inv)'; toggleInv.style.background = 'var(--inv-g)'; toggleInv.style.color = 'var(--inv)';
+    toggleCre.style.borderColor = 'var(--border)'; toggleCre.style.background = 'transparent'; toggleCre.style.color = 'var(--text3)';
+});
+toggleCre.addEventListener('click', () => {
+    simCre.style.display = 'block'; simInv.style.display = 'none';
+    toggleCre.style.borderColor = 'var(--cre)'; toggleCre.style.background = 'var(--cre-g)'; toggleCre.style.color = 'var(--cre)';
+    toggleInv.style.borderColor = 'var(--border)'; toggleInv.style.background = 'transparent'; toggleInv.style.color = 'var(--text3)';
+});
+
+// ========== SIMULATOR ENGINE (reusable) ==========
+function createSimulator(containerId, lines, phaseNames) {
+    const container = document.getElementById(containerId);
+    const out = container.querySelector('.sim-body');
+    const playBtn = container.querySelector('[id$="-play"], #sim-play');
+    const restartBtn = container.querySelector('[id$="-restart"], #sim-restart');
+    const progressBar = container.querySelector('.sim-progress-fill');
+    const statusEl = container.querySelector('.sim-status');
+    const steps = container.querySelectorAll('.sim-step');
+    const conns = container.querySelectorAll('.sim-connector');
+
+    let playing = false, lineIdx = 0, timeout = null, started = false;
+
+    function setPhase(p) {
+        steps.forEach(s => {
+            const sp = +s.dataset.phase;
+            s.classList.toggle('active', sp === p);
+            s.classList.toggle('done', sp < p);
+        });
+        conns.forEach(c => c.classList.toggle('filled', +c.dataset.conn < p));
+    }
+
+    function addLine(html) {
+        const div = document.createElement('div');
+        div.className = 'line';
+        div.innerHTML = html || '&nbsp;';
+        out.appendChild(div);
+        requestAnimationFrame(() => { div.classList.add('show'); out.scrollTop = out.scrollHeight; });
+    }
+
+    function playNext() {
+        if (!playing || lineIdx >= lines.length) {
+            if (lineIdx >= lines.length) {
+                playing = false; playBtn.textContent = '↺';
+                statusEl.textContent = 'Complete'; setPhase(7);
+            }
+            return;
+        }
+        const l = lines[lineIdx];
+        setPhase(l.phase);
+        statusEl.textContent = phaseNames[l.phase] || '';
+        addLine(l.html);
+        lineIdx++;
+        progressBar.style.width = Math.round((lineIdx / lines.length) * 100) + '%';
+        timeout = setTimeout(playNext, l.delay || 120);
+    }
+
+    function togglePlay() {
+        if (lineIdx >= lines.length) { reset(); return; }
+        playing = !playing;
+        playBtn.textContent = playing ? '❚❚' : '▶';
+        if (playing) { started = true; playNext(); }
+        else { clearTimeout(timeout); statusEl.textContent = 'Paused'; }
+    }
+
+    function reset() {
+        clearTimeout(timeout);
+        playing = false; started = false; lineIdx = 0;
+        out.innerHTML = '';
+        playBtn.textContent = '▶';
+        progressBar.style.width = '0%';
+        statusEl.textContent = 'Ready to play';
+        setPhase(0);
+        steps.forEach(s => s.classList.remove('done', 'active'));
+        conns.forEach(c => c.classList.remove('filled'));
+        steps[0].classList.add('active');
+    }
+
+    playBtn.addEventListener('click', togglePlay);
+    restartBtn.addEventListener('click', reset);
+    return { togglePlay, reset, get started() { return started; } };
+}
+
+// ========== /INVESTIGATE SIMULATOR ==========
+const invSim = createSimulator('sim-inv', [
 // Phase 0 — Ticket
 { phase: 0, html: '<span class="sd">─── Jira ticket PTR-4743 received ───</span>' },
 { phase: 0, html: '<span class="sb">Summary:</span> <span class="sf">Practice settings providers page — flaky test</span>' },
 { phase: 0, html: '<span class="sb">Spec:</span> <span class="si">practice-settings-user-flow.spec.js</span>' },
 { phase: 0, html: '<span class="sd">Priority: P1 — affecting CI reliability</span>' },
 { phase: 0, html: '' },
-{ phase: 0, html: '<span class="sp">&gt; /cypress-investigate practice-settings-user-flow.spec.js</span>', typing: true },
+{ phase: 0, html: '<span class="sp">&gt; /cypress-investigate practice-settings-user-flow.spec.js</span>' },
 { phase: 0, html: '' },
 // Phase 1 — Fetch CI
 { phase: 1, html: '<span class="sw">Fetching from TeamCity...</span>' },
@@ -1198,99 +1351,153 @@ const lines = [
 { phase: 6, html: '<span class="so">   Reviews: addressed</span>' },
 { phase: 6, html: '<span class="so">   Total time: ~12 minutes</span>' },
 { phase: 6, html: '<span class="so">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>' },
-];
+], ['Receiving ticket', 'Fetching CI failures', 'Analyzing patterns', 'Identifying root cause', 'Applying fix', 'Stress testing', 'Shipping PR']);
 
-const out = document.getElementById('sim-output');
-const playBtn = document.getElementById('sim-play');
-const restartBtn = document.getElementById('sim-restart');
-const progressBar = document.getElementById('sim-progress');
-const statusEl = document.getElementById('sim-status');
-const steps = document.querySelectorAll('.sim-step');
-const conns = document.querySelectorAll('.sim-connector');
+// ========== /CREATE SIMULATOR ==========
+const creSim = createSimulator('sim-cre', [
+// Phase 0 — Parse Input
+{ phase: 0, html: '<span class="sp">&gt; /cypress-create PTR-4764</span>' },
+{ phase: 0, html: '' },
+{ phase: 0, html: '<span class="sd">─── Parsing input ───</span>' },
+{ phase: 0, html: '<span class="sb">Input type:</span> <span class="sf">Jira ticket</span>' },
+{ phase: 0, html: '<span class="sd">Fetching from Jira API...</span>', delay: 500 },
+{ phase: 0, html: '' },
+{ phase: 0, html: '<span class="sb">PTR-4764:</span> <span class="sf">BOB JS migration — booking flow E2E</span>' },
+{ phase: 0, html: '<span class="sd">ACs:</span> <span class="sf">tracking params, booking confirmation, inbox verification</span>' },
+{ phase: 0, html: '<span class="sd">Labels:</span> <span class="sf">Marketplace, Booking</span>' },
+{ phase: 0, html: '<span class="sd">Team:</span> <span class="sf">Patient-Acquisition</span>' },
+{ phase: 0, html: '' },
+// Phase 1 — Research
+{ phase: 1, html: '<span class="si">Researching existing coverage...</span>' },
+{ phase: 1, html: '' },
+{ phase: 1, html: '<span class="sd">Cypress Cloud:</span> <span class="sw">No existing spec for BOB booking flow</span>' },
+{ phase: 1, html: '<span class="sd">Local sandbox:</span> <span class="so">✓ Found bob-page.spec.js (page only)</span>' },
+{ phase: 1, html: '  <span class="sf">Extracted: iframe pattern, test URL format, viewport</span>' },
+{ phase: 1, html: '' },
+{ phase: 1, html: '<span class="si">Searching prod repos: frontend-monorepo/bob/...</span>', delay: 600 },
+{ phase: 1, html: '<span class="so">✓ 12 data-test attributes found</span>' },
+{ phase: 1, html: '  <span class="sf">[data-test="bob-booking-button"]</span>' },
+{ phase: 1, html: '  <span class="sf">[data-test="bob-confirmation-message"]</span>' },
+{ phase: 1, html: '  <span class="sf">[data-test="bob-tracking-pixel"]</span>' },
+{ phase: 1, html: '  <span class="sf">[data-test="bob-timeslot-grid"]</span>' },
+{ phase: 1, html: '  <span class="sd">... and 8 more</span>' },
+{ phase: 1, html: '' },
+{ phase: 1, html: '<span class="sd">Loading patterns from cypress-core/patterns/...</span>' },
+{ phase: 1, html: '  <span class="so">TIMING-012</span> <span class="sd">iframe load wait</span>' },
+{ phase: 1, html: '  <span class="so">NETWORK-003</span> <span class="sd">stub analytics before visit</span>' },
+{ phase: 1, html: '  <span class="so">STATE-005</span> <span class="sd">post-booking cleanup (cancel appointment)</span>' },
+{ phase: 1, html: '' },
+// Phase 2 — Classify
+{ phase: 2, html: '<span class="si">Classifying test type...</span>' },
+{ phase: 2, html: '' },
+{ phase: 2, html: '<span class="sb">Type:</span> <span class="so">Flow test</span> <span class="sd">(multi-page workflow)</span>' },
+{ phase: 2, html: '  <span class="sf">search → select provider → book → confirm → inbox</span>' },
+{ phase: 2, html: '' },
+{ phase: 2, html: '<span class="sb">BU routing:</span>' },
+{ phase: 2, html: '  <span class="so">BU/Marketplace/Booking/Flows/</span>' },
+{ phase: 2, html: '  <span class="sf">bob-booking-flow.spec.js</span>' },
+{ phase: 2, html: '' },
+{ phase: 2, html: '<span class="sd">OWNERSHIP.md:</span> <span class="sf">#patient-acquisition-engineering</span>' },
+{ phase: 2, html: '' },
+// Phase 3 — Generate
+{ phase: 3, html: '<span class="si">Generating test...</span>', delay: 400 },
+{ phase: 3, html: '' },
+{ phase: 3, html: '<span class="sb">describe</span>(<span class="sf">"BOB Booking Flow"</span>, () => {' },
+{ phase: 3, html: '  <span class="sb">beforeEach</span>(() => {' },
+{ phase: 3, html: '    <span class="so">cy.stubNetworkCalls()</span>' },
+{ phase: 3, html: '    <span class="so">cy.intercept("**/booking/create").as("bookingCreate")</span>' },
+{ phase: 3, html: '    <span class="so">cy.intercept("**/tracking/**").as("tracking")</span>' },
+{ phase: 3, html: '  })' },
+{ phase: 3, html: '' },
+{ phase: 3, html: '  <span class="sb">it</span>(<span class="sf">"completes booking and verifies confirmation"</span>, () => {' },
+{ phase: 3, html: '    <span class="so">cy.visit("/bob/booking-page?...")</span>' },
+{ phase: 3, html: '    <span class="so">cy.get(\'[data-test="bob-timeslot-grid"]\')</span>' },
+{ phase: 3, html: '      <span class="so">.should("be.visible")</span>' },
+{ phase: 3, html: '    <span class="so">cy.get(\'[data-test="bob-booking-button"]\')</span>' },
+{ phase: 3, html: '      <span class="so">.click()</span>' },
+{ phase: 3, html: '    <span class="so">cy.wait("@bookingCreate")</span>' },
+{ phase: 3, html: '    <span class="so">cy.get(\'[data-test="bob-confirmation-message"]\')</span>' },
+{ phase: 3, html: '      <span class="so">.should("contain", "confirmed")</span>' },
+{ phase: 3, html: '  })' },
+{ phase: 3, html: '' },
+{ phase: 3, html: '  <span class="sb">afterEach</span>(() => {' },
+{ phase: 3, html: '    <span class="sd">// STATE-005: cancel appointment to clean up</span>' },
+{ phase: 3, html: '    <span class="so">cy.cancelAppointment()</span>' },
+{ phase: 3, html: '  })' },
+{ phase: 3, html: '})' },
+{ phase: 3, html: '' },
+{ phase: 3, html: '<span class="sb">Assertions:</span> <span class="so">14</span> <span class="sd">(text, visibility, navigation, tracking)</span>' },
+{ phase: 3, html: '<span class="sb">Intercepts:</span> <span class="so">3</span> <span class="sd">(booking API, tracking, inbox)</span>' },
+{ phase: 3, html: '<span class="sb">Cleanup:</span> <span class="so">cancel appointment in afterEach</span>' },
+{ phase: 3, html: '' },
+{ phase: 3, html: '<span class="so">✓ Test generated. Awaiting review.</span>' },
+{ phase: 3, html: '' },
+// Phase 4 — Stress Test
+{ phase: 4, html: '<span class="sw">Adding stress test loop (15 iterations)...</span>' },
+{ phase: 4, html: '<span class="sd">Wrapping describe in Cypress._.times(15, (i) => { ... })</span>' },
+{ phase: 4, html: '<span class="sd">Creating draft PR...</span>' },
+{ phase: 4, html: '<span class="so">✓ PR #2215 created (draft)</span>' },
+{ phase: 4, html: '' },
+{ phase: 4, html: '<span class="sd">Pushing to CI...</span>' },
+{ phase: 4, html: '<span class="sd">Polling TeamCity build #48305...</span>' },
+{ phase: 4, html: '  <span class="sd">120s...</span> <span class="sw">queued</span>', delay: 700 },
+{ phase: 4, html: '  <span class="sd">270s...</span> <span class="si">running — 5/15 passed</span>', delay: 600 },
+{ phase: 4, html: '  <span class="sd">270s...</span> <span class="si">running — 12/15 passed</span>', delay: 500 },
+{ phase: 4, html: '  <span class="sd">270s...</span> <span class="so">15/15 passed!</span>', delay: 400 },
+{ phase: 4, html: '' },
+{ phase: 4, html: '<span class="so">✅ All 15 iterations passed — zero flakes</span>' },
+{ phase: 4, html: '' },
+{ phase: 4, html: '<span class="sd">Removing stress loop...</span>' },
+{ phase: 4, html: '<span class="so">✓ Committed:</span> <span class="sf">"Remove stress test loop — 15/15 passed"</span>' },
+{ phase: 4, html: '' },
+// Phase 5 — Review
+{ phase: 5, html: '<span class="si">Checking for CodeRabbit comments...</span>', delay: 500 },
+{ phase: 5, html: '' },
+{ phase: 5, html: '<span class="sw">2 comments found:</span>' },
+{ phase: 5, html: '' },
+{ phase: 5, html: '  <span class="sw">P2:</span> <span class="sf">"Add anchor assertion after cy.visit"</span>' },
+{ phase: 5, html: '  <span class="si">→ Severity: medium — applying fix...</span>' },
+{ phase: 5, html: '  <span class="so">✓ Fixed (commit def5678)</span>' },
+{ phase: 5, html: '  <span class="sd">Replied: "Added cy.url().should(\'include\', \'/bob/\')"</span>' },
+{ phase: 5, html: '' },
+{ phase: 5, html: '  <span class="sd">P3:</span> <span class="sf">"Consider adding mobile viewport test"</span>' },
+{ phase: 5, html: '  <span class="si">→ Severity: low — acknowledged, separate PR</span>' },
+{ phase: 5, html: '  <span class="sd">Replied: "Tracked for PR #2216 (BOB mobile flow)"</span>' },
+{ phase: 5, html: '' },
+{ phase: 5, html: '<span class="so">✓ All review comments addressed</span>' },
+{ phase: 5, html: '' },
+// Phase 6 — Ship PR
+{ phase: 6, html: '<span class="si">Finalizing PR...</span>' },
+{ phase: 6, html: '' },
+{ phase: 6, html: '<span class="so">✅ PR #2215 marked ready for review</span>' },
+{ phase: 6, html: '  <span class="sf">Title: test(cypress): add BOB booking flow E2E</span>' },
+{ phase: 6, html: '' },
+{ phase: 6, html: '<span class="sb">PR includes:</span>' },
+{ phase: 6, html: '  <span class="sf">• Source: Jira PTR-4764</span>' },
+{ phase: 6, html: '  <span class="sf">• 14 assertions, 3 intercepts, afterEach cleanup</span>' },
+{ phase: 6, html: '  <span class="sf">• Patterns applied: TIMING-012, NETWORK-003, STATE-005</span>' },
+{ phase: 6, html: '  <span class="sf">• Stress test: 15/15 passed</span>' },
+{ phase: 6, html: '  <span class="sf">• CodeRabbit: 2 comments addressed</span>' },
+{ phase: 6, html: '' },
+{ phase: 6, html: '<span class="so">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>' },
+{ phase: 6, html: '<span class="so">✅ DONE — PR #2215 ready for review</span>' },
+{ phase: 6, html: '<span class="so">   New test: BOB booking flow E2E</span>' },
+{ phase: 6, html: '<span class="so">   Stress test: 15/15 passed</span>' },
+{ phase: 6, html: '<span class="so">   Reviews: 2/2 addressed</span>' },
+{ phase: 6, html: '<span class="so">   Total time: ~18 minutes</span>' },
+{ phase: 6, html: '<span class="so">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>' },
+], ['Parsing Jira ticket', 'Researching coverage', 'Classifying test type', 'Generating test', 'Stress testing', 'Triaging reviews', 'Shipping PR']);
 
-let playing = false, lineIdx = 0, timeout = null, started = false;
-
-function setPhase(p) {
-    steps.forEach(s => {
-        const sp = +s.dataset.phase;
-        s.classList.toggle('active', sp === p);
-        s.classList.toggle('done', sp < p);
-    });
-    conns.forEach(c => {
-        c.classList.toggle('filled', +c.dataset.conn < p);
-    });
-}
-
-function addLine(html) {
-    const div = document.createElement('div');
-    div.className = 'line';
-    div.innerHTML = html || '&nbsp;';
-    out.appendChild(div);
-    requestAnimationFrame(() => {
-        div.classList.add('show');
-        out.scrollTop = out.scrollHeight;
-    });
-}
-
-function updateProgress() {
-    progressBar.style.width = Math.round((lineIdx / lines.length) * 100) + '%';
-}
-
-function playNext() {
-    if (!playing || lineIdx >= lines.length) {
-        if (lineIdx >= lines.length) {
-            playing = false;
-            playBtn.textContent = '↺';
-            statusEl.textContent = 'Complete';
-            setPhase(7);
-        }
-        return;
-    }
-    const l = lines[lineIdx];
-    setPhase(l.phase);
-    const phaseNames = ['Receiving ticket', 'Fetching CI failures', 'Analyzing patterns', 'Identifying root cause', 'Applying fix', 'Stress testing', 'Shipping PR'];
-    statusEl.textContent = phaseNames[l.phase] || '';
-    addLine(l.html);
-    lineIdx++;
-    updateProgress();
-    timeout = setTimeout(playNext, l.delay || 120);
-}
-
-function togglePlay() {
-    if (lineIdx >= lines.length) { reset(); return; }
-    playing = !playing;
-    playBtn.textContent = playing ? '❚❚' : '▶';
-    if (playing) { started = true; playNext(); }
-    else { clearTimeout(timeout); statusEl.textContent = 'Paused'; }
-}
-
-function reset() {
-    clearTimeout(timeout);
-    playing = false; started = false; lineIdx = 0;
-    out.innerHTML = '';
-    playBtn.textContent = '▶';
-    progressBar.style.width = '0%';
-    statusEl.textContent = 'Ready to play';
-    setPhase(0);
-    steps.forEach(s => s.classList.remove('done', 'active'));
-    conns.forEach(c => c.classList.remove('filled'));
-    steps[0].classList.add('active');
-}
-
-playBtn.addEventListener('click', togglePlay);
-restartBtn.addEventListener('click', reset);
-
-// Auto-play when workflow tab is visible and simulator scrolls into view
+// Auto-play investigate sim when scrolled into view
 const simObs = new IntersectionObserver(es => {
     es.forEach(e => {
-        if (e.isIntersecting && !started) {
-            setTimeout(() => { if (!started) togglePlay(); }, 800);
+        if (e.isIntersecting && !invSim.started) {
+            setTimeout(() => { if (!invSim.started) invSim.togglePlay(); }, 800);
         }
     });
 }, { threshold: .3 });
-const simEl = document.querySelector('.sim-pipeline');
+const simEl = document.querySelector('#sim-inv .sim-pipeline');
 if (simEl) simObs.observe(simEl);
-})();
 </script>
 
 </body>
