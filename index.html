@@ -560,9 +560,9 @@
         <span class="dot d2"></span>/cypress-create
     </div>
     <h1 class="r rd1">Stop guessing.<br><span class="gr">Start knowing.</span></h1>
-    <p class="hero-p r rd2">Two Claude Code skills that turned E2E test maintenance from <strong>trial and error</strong> into <strong>evidence-based engineering</strong>. 32 PRs in 6 weeks — every flaky fix and new test driven entirely by these skills.</p>
+    <p class="hero-p r rd2">Two Claude Code skills that turned E2E test maintenance from <strong>trial and error</strong> into <strong>evidence-based engineering</strong>. 41 PRs — every flaky fix and new test driven entirely by these skills.</p>
     <div class="stat-strip r rd3">
-        <div class="stat"><div class="val" data-count="32">0</div><div class="lbl">PRs shipped</div></div>
+        <div class="stat"><div class="val" data-count="41">0</div><div class="lbl">PRs shipped</div></div>
         <div class="stat"><div class="val" data-count="0">0</div><div class="lbl">Re-fixes needed</div></div>
         <div class="stat"><div class="val" data-count="60">0</div><div class="lbl">Stress test standard</div></div>
         <div class="stat"><div class="val" data-count="15">0</div><div class="lbl">Avg minutes to fix</div></div>
@@ -854,14 +854,14 @@
     <div class="panel-inner">
         <div class="panel-header">
             <div class="eyebrow ey-green">Proof</div>
-            <h2>32 PRs. Zero re-fixes.</h2>
+            <h2>41 PRs. Zero re-fixes.</h2>
             <p class="desc">Every PR below was driven by skill invocation — root cause analysis, pattern references, stress test verification. No exceptions.</p>
         </div>
 
         <!-- Big stats -->
         <div class="impact-stats">
             <div class="impact-stat">
-                <div class="is-val" data-count="32">0</div>
+                <div class="is-val" data-count="41">0</div>
                 <div class="is-lbl">PRs shipped (Apr–May)</div>
             </div>
             <div class="impact-stat">
@@ -1123,6 +1123,71 @@ cy.get('[data-test="role-filter"]')
                 <h4>Run tests without test directory</h4>
                 <p class="cause">Test directory dependency caused environment issues</p>
                 <p class="fix">Configured tests to run against prod directly</p>
+            </div>
+
+            <!-- RBAC spec creation PRs (Dec–Mar) -->
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2153 · Mar 27</div>
+                <h4>Enable user mgmt add/edit/delete tests</h4>
+                <p class="cause">RBAC: user management CRUD coverage</p>
+                <p class="fix">Full add, edit, delete flows for user roles</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2141 · Mar 20</div>
+                <h4>Spend management tests — billing user</h4>
+                <p class="cause">RBAC: billing user access to spend management</p>
+                <p class="fix">Verify billing user can access spend features</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2125 · Mar 9</div>
+                <h4>SPO management user flows</h4>
+                <p class="cause">RBAC: SPO management role coverage</p>
+                <p class="fix">E2E spec for SPO management user permissions</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2112 · Feb 22</div>
+                <h4>Additional appointment mgmt user tests</h4>
+                <p class="cause">RBAC: expand appointment management coverage</p>
+                <p class="fix">Additional scenarios for appt mgmt role</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2103 · Feb 15</div>
+                <h4>User management user flows</h4>
+                <p class="cause">RBAC: user management role coverage</p>
+                <p class="fix">E2E spec for user management permissions</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2090 · Feb 2</div>
+                <h4>Additional RBAC tests</h4>
+                <p class="cause">RBAC: expanding role-based coverage</p>
+                <p class="fix">More role/permission combination scenarios</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2089 · Jan 31</div>
+                <h4>Practice Settings user flows</h4>
+                <p class="cause">RBAC: practice settings role coverage</p>
+                <p class="fix">E2E spec for practice settings permissions</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2018 · Dec 30</div>
+                <h4>Billing user flows</h4>
+                <p class="cause">RBAC: billing role coverage</p>
+                <p class="fix">E2E spec for billing user permissions</p>
+            </div>
+            <div class="proof">
+                <div class="tag tag-cre">/create</div>
+                <div class="pr-num">#2009 · Dec 29</div>
+                <h4>Appointment management user flows</h4>
+                <p class="cause">RBAC: appointment management role coverage</p>
+                <p class="fix">E2E spec for appt management permissions</p>
             </div>
         </div>
     </div>
