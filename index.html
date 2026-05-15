@@ -1305,8 +1305,12 @@ cy.get('[data-test="role-filter"]')
                 <p>A <code>/cypress-to-playwright</code> skill already exists — migrates one Team slice per PR, maps 71 custom commands, converts 114 <code>cy.contains</code> calls, and handles <code>testAbSystemOverrides</code> cookie porting. Running side-by-side with Cypress until per-BU cutover.</p>
             </div>
             <div class="fc">
-                <h4><span class="pill pill-next">NEXT</span> Playwright-native create &amp; investigate</h4>
-                <p>Port the <code>/create</code> and <code>/investigate</code> skills to emit Playwright tests natively — <code>page.locator</code>, <code>page.route</code>, <code>expect</code> assertions. Same research-first workflow, same stress testing, same CodeRabbit loop, different test runner. Pattern library gets a Playwright column.</p>
+                <h4><span class="pill pill-next">NEXT</span> Playwright test creator</h4>
+                <p>A <code>/playwright-create</code> skill that writes Playwright tests from scratch — <code>page.locator</code>, <code>page.route</code>, <code>expect</code> assertions, <code>test.describe</code> structure. Same research-first workflow (sandbox → Cypress Cloud → GitHub prod code → pattern library), same user review gate, same stress test validation, same CodeRabbit loop. Not a port of Cypress tests — native Playwright from the ground up for new coverage.</p>
+            </div>
+            <div class="fc">
+                <h4><span class="pill pill-next">NEXT</span> Playwright failure investigator</h4>
+                <p>A <code>/playwright-investigate</code> skill that debugs Playwright test failures from CI — same cluster → triage → root cause → fix → stress test pipeline, adapted for Playwright's trace viewer artifacts, <code>page.screenshot</code> snapshots, and <code>test.info().errors</code> output. Parse Playwright HTML reports and trace ZIPs instead of TeamCity test XML. Same five-category decision tree, same pattern library (with Playwright equivalents).</p>
             </div>
             <div class="fc">
                 <h4><span class="pill pill-next">NEXT</span> Cross-team skill export</h4>
