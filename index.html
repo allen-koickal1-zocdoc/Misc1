@@ -776,7 +776,7 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-both">Both skills</div>
                     <h4>Research before code</h4>
-                    <p>Early iterations guessed at selectors. Now: search prod repos for <code>data-test</code>, check local sandbox first — local tests reveal runtime patterns source code doesn't show.</p>
+                    <p>Early iterations guessed at selectors and produced tests that broke on first CI run. Now: a mandatory multi-layer search — local sandbox specs first (they reveal iframes, redirect URLs, auth quirks that source code doesn't show), then GitHub <code>data-test</code> attribute search across prod repos, then <code>test-to-repo.json</code> mapping for known feature areas. The skill won't write a single line until selectors are confirmed from production code.</p>
                 </div>
             </div>
             <div class="evo-item">
@@ -784,7 +784,7 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-inv">/investigate</div>
                     <h4>Never skip steps</h4>
-                    <p>Shortcutting to "just fix it" caused repeat iterations. Now the full pipeline is enforced: fetch → analyze → research → fix → verify. Step 3 often reveals patterns that change the fix.</p>
+                    <p>Shortcutting to "just fix it" caused 3–4 failed iterations on what should've been a one-shot fix. Now an 8-step pipeline is enforced: fetch → cluster → extract metadata → find prod repos → root cause → output findings → stress test → address reviews. Step 4 (finding prod repos) alone often reveals existing Cypress commands, selector files, and flow patterns that completely change the fix approach. The skill literally refuses to proceed without completing each step.</p>
                 </div>
             </div>
             <div class="evo-item">
@@ -792,7 +792,7 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-both">Both skills</div>
                     <h4>Stress testing is non-negotiable</h4>
-                    <p>A fix that passes once means nothing. Every PR gets 20–60x loops in CI. The skill polls TeamCity until all iterations pass, then removes the loop automatically.</p>
+                    <p>A fix that passes once means nothing — flaky tests fail on iteration 7, 12, or 23. Every PR gets <code>Cypress._.times(N)</code> loops with smart sizing: <code>max(3, min(15, floor(50 / total_tests)))</code> to keep CI under ~15 minutes. A 2-test spec gets 15 iterations; a 10-test spec gets 5. The skill wraps all describe blocks, adds <code>[Run N/M]</code> labels for traceability, polls TeamCity via <code>ScheduleWakeup</code>, and auto-removes the loop only after all iterations pass green.</p>
                 </div>
             </div>
             <div class="evo-item">
@@ -800,7 +800,7 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-inv">/investigate</div>
                     <h4>Trace to the causing PR</h4>
-                    <p>PR #2166 taught the skill to build full timelines — who changed what, when, and why. Not "something changed." Makes root cause undeniable.</p>
+                    <p>PR #2166 taught the skill that "something changed in prod" isn't a root cause. Now <code>find-causing-pr.py</code> parses the spec to extract API endpoints, route patterns, <code>data-test</code> selectors, and GraphQL operation names, then scores candidate PRs with weighted signal matching plus temporal proximity boost. The output includes who merged what, when, and the exact line diff that broke the assertion — making root cause undeniable and handoff to the owning team frictionless.</p>
                 </div>
             </div>
             <div class="evo-item">
@@ -808,15 +808,15 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-inv">/investigate</div>
                     <h4>"What we did NOT do"</h4>
-                    <p>PRs now document deliberate non-choices. No <code>force:true</code>, no <code>cy.wait(ms)</code>. Future maintainers understand the reasoning, not just the code.</p>
+                    <p>PRs now document deliberate non-choices — no <code>force:true</code> (masks real bugs), no <code>cy.wait(ms)</code> (brittle delay), no blanket <code>.first()</code> (non-deterministic). The anti-patterns file (<code>cypress-core/patterns/anti-patterns.md</code>) has 15+ entries, each from a real failed approach. Future maintainers see not just what the code does, but why 3 other approaches were rejected.</p>
                 </div>
             </div>
             <div class="evo-item">
                 <div class="evo-num nc">06</div>
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-cre">/create</div>
-                    <h4>Local sandbox first</h4>
-                    <p>Creating tests now checks existing sandbox specs before source repos. Local tests reveal iframes, specific URLs, auth patterns, and runtime quirks.</p>
+                    <h4>Local sandbox first, then Cypress Cloud</h4>
+                    <p>Before writing any test, the skill checks three layers: (1) existing sandbox specs in the same BU folder for runtime patterns, (2) Cypress Cloud for existing coverage and flaky tests — sometimes recommending fixing a flaky test over creating a new one, (3) source repo tests for complete flows and selector files. This deduplication gate prevents redundant coverage and ensures new tests build on what already works.</p>
                 </div>
             </div>
             <div class="evo-item">
@@ -824,15 +824,15 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-cre">/create</div>
                     <h4>Comprehensive assertion checklist</h4>
-                    <p>Not just "element visible." Text content, tooltips, modals, navigation state, tracking params. The checklist grew from real missed bugs in production.</p>
+                    <p>Not just "element visible" — a 10-point validation checklist grown from real missed bugs: exact text content, tooltip hover-and-verify, modal title + body + button labels before interaction, button enabled/disabled state, form field labels and placeholders, dropdown option lists, table column headers, toast/alert messages, navigation breadcrumbs, and state changes after actions. Optional Figma integration validates every string from the design spec using <code>get_design_context</code> MCP.</p>
                 </div>
             </div>
             <div class="evo-item">
                 <div class="evo-num nc">08</div>
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-both">Both skills</div>
-                    <h4>CodeRabbit integration</h4>
-                    <p>Skills poll for review comments, triage by severity, apply direct fixes with commit hashes, and reply with reasoning. The full PR lifecycle is automated.</p>
+                    <h4>CodeRabbit integration with tiered fixes</h4>
+                    <p>Skills poll for review comments and classify them P0–P3 by severity. Tier 1 (single file, &lt;5 lines) gets a direct edit; Tier 2 (multi-file, uncertain scope) dispatches a subagent. Each fix gets its own commit for traceability, but all commits push in a single push to avoid triggering N separate CI runs. Replies include the specific commit hash so reviewers can trace exactly what changed. The skill plans for 2 fix-push-review cycles and flags diminishing returns if cycle 3+ still generates comments.</p>
                 </div>
             </div>
             <div class="evo-item">
@@ -840,7 +840,73 @@
                 <div class="evo-content">
                     <div class="evo-cat evo-cat-inv">/investigate</div>
                     <h4>Pattern library compounds</h4>
-                    <p>Each investigation adds to <code>cypress-core/patterns/</code>. Started with timing and selectors — now includes auth context, external dependencies, deterministic selection, text matching, migration patterns.</p>
+                    <p>Each investigation adds to <code>cypress-core/patterns/</code> — six files covering timing (20 patterns), network (22), selectors (15), state (20), assertions (15), and anti-patterns (15). <code>analyze-patterns.py</code> runs 15 regex-based detectors as a static analysis gate before any fix is attempted, catching mechanical issues (hardcoded waits, missing aliases, leftover <code>cy.pause()</code>) before human investigation time is spent. Started with timing and selectors — now the library is the institutional memory of every failure mode encountered.</p>
+                </div>
+            </div>
+
+            <!-- New refinements from continued daily use -->
+            <div class="evo-item">
+                <div class="evo-num ni">10</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-inv">/investigate</div>
+                    <h4>Cluster before you dive</h4>
+                    <p>Investigating failures one-by-one wasted time on symptoms of the same root cause. Now Step 2 groups failures by spec file, error type, and failure onset into clusters with P1–P4 priority tiers <em>before</em> any individual investigation begins. P1 (bad pattern, fixable now) gets investigated first; P3 (infra flake) gets logged, not fixed. When 3+ independent clusters exist, the skill spawns concurrent subagents — one per cluster — and compiles their results into a single findings report.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num ni">11</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-inv">/investigate</div>
+                    <h4>Five-category root cause decision tree</h4>
+                    <p>Every failure is classified into exactly one of: Bad Pattern, Prod Change, Experiment, Flaky Infra, or Unknown. Each category has its own investigation template, output format, and recommended action. "Experiment" checks AB cookie overrides via the <code>ab-lookup</code> API to detect ramped/ended experiments. "Prod Change" runs <code>find-causing-pr.py</code> with signal scoring. No more hand-waving "it's probably flaky" — the category determines the fix strategy.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num nc">12</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-both">Both skills</div>
+                    <h4>Cache-aware CI polling</h4>
+                    <p>Early versions used arbitrary <code>sleep(60)</code> loops that burned prompt cache 8+ times per CI run. Now polling uses <code>ScheduleWakeup</code> tuned to the prompt cache TTL: 120s for the first check (CI needs time to start), 270s for subsequent checks (stays inside the 5-minute cache window), and never 300s (worst-of-both: cache miss without amortization). The skill also learned that TeamCity "Progress: 100%" means the current <em>step</em> finished, not the run — it checks run <em>status</em> instead.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num nc">13</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-cre">/create</div>
+                    <h4>User review gate before any file is written</h4>
+                    <p>Tests written without user review often missed flow nuances or used wrong credentials. Now the skill presents a detailed step-by-step breakdown — every action, selector, assertion, and intercept — with seven modification options (add/remove steps, change selectors, swap accounts, add edge cases, split tests). The test file is <em>never</em> written without explicit user approval. Template-based generation preserves team conventions that fresh generation would miss.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num ni">14</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-both">Both skills</div>
+                    <h4>Never run Cypress in the sandbox</h4>
+                    <p>The agentic sandbox blocks Chrome DevTools (HTTP 567), so every local <code>npx cypress run</code> attempt fails silently. Both skills learned to route all test execution through TeamCity CI exclusively — no local debugging, no fallback. Fixes are validated entirely through the stress test → CI poll → verify loop. This non-obvious constraint would waste hours on first encounter without the explicit guard.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num ni">15</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-inv">/investigate</div>
+                    <h4>Worktree isolation for parallel branches</h4>
+                    <p>Fixing a test while the user works on a different branch used to mean stash/switch/pop — risky, error-prone, and forgettable. Now the skill uses <code>git worktree</code> to create an isolated directory for the fix branch. Both branches work in parallel, no state is lost, and cleanup is automatic when the fix merges. Combined with the Agent tool's <code>isolation: "worktree"</code> option, fix investigations run without touching the user's working tree.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num ni">16</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-both">Both skills</div>
+                    <h4>REST API over GraphQL for GitHub</h4>
+                    <p>A known GraphQL <code>projectCards</code> bug causes <code>gh pr view</code> and <code>gh pr edit</code> to fail silently on some PRs. Both skills mandate <code>gh api</code> REST endpoints for all GitHub operations — fetching PR comments, posting replies, checking review status. Without this guard, CodeRabbit comment handling breaks intermittently with no useful error message, leading to unaddressed review feedback.</p>
+                </div>
+            </div>
+            <div class="evo-item">
+                <div class="evo-num nc">17</div>
+                <div class="evo-content">
+                    <div class="evo-cat evo-cat-inv">/investigate</div>
+                    <h4>Continuous mode with daily accumulation</h4>
+                    <p>Investigations don't have to be interactive. The skill can run as a 4-hour cron job in continuous mode, appending findings to daily files (<code>findings/YYYY-MM-DD.md</code>). The <code>--recent</code> flag surfaces accumulated findings without re-running the full pipeline. This shifts test health monitoring from reactive ("it broke last night") to passive ("here's what's been degrading this week").</p>
                 </div>
             </div>
         </div>
